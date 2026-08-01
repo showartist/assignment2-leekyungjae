@@ -1840,25 +1840,52 @@ body {
 }
 
 @media (max-width: 720px) {
+  /* 모바일 환경에서도 무조건 카드 3장이 가로 3열 1줄로 나열되도록 고정 */
   .spread-track {
     display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 28px;
-    padding: 0 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    justify-content: center !important;
+    align-items: start !important;
+    gap: 10px !important;
+    padding: 0 4px !important;
   }
 
   .spread-item {
-    width: 100%;
-    max-width: 280px;
-    margin: 0 auto;
+    width: 100% !important;
+    max-width: 120px !important;
+    margin: 0 auto !important;
+    gap: 6px !important;
+  }
+
+  .spread-label-en {
+    font-size: 10px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  .spread-label-ko {
+    font-size: 12px !important;
   }
 
   .mini-3d {
-    width: 100%;
+    width: 100% !important;
+    max-width: 120px !important;
+    aspect-ratio: 0.625 !important;
   }
 
   .card-caption-block {
-    max-width: 280px;
+    width: 100% !important;
+    max-width: 120px !important;
+    padding: 4px 2px !important;
+  }
+
+  .caption-fact {
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+  }
+
+  .caption-meaning {
+    font-size: 10px !important;
+    line-height: 1.3 !important;
   }
 
   .editorial-result {
