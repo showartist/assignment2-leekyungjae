@@ -1020,9 +1020,10 @@ function handleThreeCardsFlip() {
     if (isShuffling || currentDrawnCards.length < 3) return;
     if (focusCardSelector?.classList.contains('hidden') && resultDetailsPanel?.classList.contains('hidden')) return;
 
-    // Highlight selected card visually
-    [pastCard, presentCard, futureCard].forEach(c => c.style.boxShadow = '');
-    cardEl.style.boxShadow = '0 0 30px rgba(182, 146, 74, 0.8), 0 0 10px rgba(255, 255, 255, 0.6)';
+    // Highlight selected card visually in-place on parent .spread-item
+    const items = [document.getElementById('pastItem'), document.getElementById('presentItem'), document.getElementById('futureItem')];
+    items.forEach(item => item?.classList.remove('is-focus'));
+    if (items[idx]) items[idx].classList.add('is-focus');
 
     const positionNames = ["첫 번째(과거)", "두 번째(현재)", "세 번째(미래)"];
     if (focusSelectionText) {

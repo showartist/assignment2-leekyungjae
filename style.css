@@ -473,50 +473,53 @@ body {
   color: #e8dfd1;
 }
 
-/* Focus Card Spotlight Showcase (Primary Reading Section) */
-.focus-card-showcase {
-  width: 100%;
-  max-width: 680px;
-  margin: 28px 0 32px;
+/* Editorial Result Section (Max-width 820px, Clean Art Exhibition Layout) */
+.editorial-result {
+  width: min(820px, calc(100% - 40px));
+  margin: 48px auto 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 28px 24px;
-  background: radial-gradient(circle at center, rgba(182, 146, 74, 0.08) 0%, rgba(12, 10, 8, 0.6) 80%);
-  border: 1px solid rgba(182, 146, 74, 0.25);
-  border-radius: 4px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
 }
 
-.showcase-card-frame {
-  width: 130px;
-  height: 200px;
-  margin: 12px 0 16px;
-  border-radius: 4px;
-  overflow: hidden;
-  border: 1px solid rgba(212, 175, 55, 0.5);
-  box-shadow: 0 10px 24px rgba(182, 146, 74, 0.2);
-}
-
-.showcase-card-img {
+.visual-transition-banner {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  padding: 20px 24px;
+  background: rgba(28, 23, 17, 0.3);
+  border-left: 2px solid var(--gold-soft);
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.transition-text {
+  font-size: 16px;
+  line-height: 1.85;
+  color: #e8dfd1;
+  word-break: keep-all;
+}
+
+/* Focus Reading Block (Clean Text Block without Duplicate Image) */
+.focus-reading-block {
+  width: 100%;
+  margin: 20px 0 28px;
+  padding: 24px 28px;
+  background: rgba(28, 23, 17, 0.35);
+  border-left: 2px solid var(--gold);
+  text-align: left;
 }
 
 .focus-card-title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--gold-soft);
   letter-spacing: 1px;
-  margin-bottom: 14px;
+  margin: 6px 0 14px;
 }
 
 .focus-card-reading-text {
-  font-size: 1.05rem; /* Min 16px desktop */
-  line-height: 1.88;
+  font-size: 16px;
+  line-height: 1.9;
   color: #f4efe6;
   text-align: left;
   word-break: keep-all;
@@ -525,14 +528,13 @@ body {
 /* Direct Question Response Block */
 .question-response-block {
   width: 100%;
-  max-width: 680px;
   margin-bottom: 28px;
   text-align: left;
-  padding: 0 6px;
+  padding: 0 4px;
 }
 
 .question-response-text {
-  font-size: 1.02rem; /* Min 16px desktop */
+  font-size: 16px;
   line-height: 1.85;
   color: #ece4d6;
   word-break: keep-all;
@@ -541,7 +543,6 @@ body {
 /* Action Advice Single Card */
 .action-advice-card {
   width: 100%;
-  max-width: 680px;
   padding: 22px 28px;
   background: linear-gradient(135deg, rgba(182, 146, 74, 0.15) 0%, rgba(20, 16, 12, 0.7) 100%);
   border: 1px solid var(--gold);
@@ -562,7 +563,7 @@ body {
 }
 
 .action-content {
-  font-size: 1.05rem;
+  font-size: 16px;
   font-weight: 500;
   line-height: 1.8;
   color: #fff;
@@ -771,17 +772,24 @@ body {
   width: 100%;
 }
 
+/* 3장 스프레드: 데스크톱에서 반드시 가로 배치 */
 .spread-track {
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 210px);
   justify-content: center;
-  gap: 36px;
+  align-items: start;
+  gap: 30px;
 }
 
 .spread-item {
+  width: 210px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  transition: transform 0.3s ease;
 }
 
 .spread-header-labels {
@@ -805,14 +813,35 @@ body {
 }
 
 .mini-3d {
-  width: clamp(110px, 10vw, 135px);
-  aspect-ratio: 0.63;
+  width: 210px;
+  aspect-ratio: 0.625;
+  margin: 0;
   transition: transform 300ms ease, box-shadow 300ms ease;
 }
 
-.mini-3d:hover {
+.card-face,
+.card-art-full {
+  width: 100%;
+  height: 100%;
+}
+
+.full-card-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 선택된 기존 카드만 강조 */
+.spread-item.is-focus {
   transform: translateY(-8px);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.95);
+}
+
+.spread-item.is-focus .mini-3d {
+  box-shadow:
+    0 0 0 1px rgba(196, 157, 71, 0.85),
+    0 18px 45px rgba(0, 0, 0, 0.55),
+    0 0 32px rgba(180, 137, 48, 0.22);
 }
 
 /* Reading Status Loader */
@@ -1587,14 +1616,41 @@ body {
   box-shadow: 0 12px 32px rgba(182, 146, 74, 0.45);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 760px) {
+  .spread-track {
+    display: flex;
+    justify-content: flex-start;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0 24px 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .spread-item {
+    flex: 0 0 72vw;
+    max-width: 280px;
+    scroll-snap-align: center;
+  }
+
+  .mini-3d {
+    width: 100%;
+  }
+
+  .editorial-result {
+    width: calc(100% - 32px);
+    margin-top: 32px;
+  }
+
   .offering-tiers {
     flex-direction: column;
     width: 100%;
   }
+
   .offering-card {
     width: 100%;
   }
+
   .offering-card.featured {
     transform: scale(1);
   }
