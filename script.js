@@ -448,7 +448,6 @@ let authMode = 'login';
 // Strict Ritual Validation State Guards
 let isBirthValidated = false;
 let isQuestionValidated = false;
-let isSealed = false;
 
 const postSealStage = document.getElementById('postSealStage');
 
