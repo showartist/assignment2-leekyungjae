@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>구스타프 클림트 영감 타로 전시관</title>
+  <meta name="description" content="클림트 회화에서 영감받은 타로 아트와 사용자의 시간이 만나는 명상적 디지털 리추얼.">
+  <meta property="og:title" content="구스타프 클림트 영감 타로">
+  <meta property="og:description" content="클림트 디지털 전시관에서 나만의 타로 의식을 경험해보세요.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Supabase JS Client SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- Canvas Texture & Warm Ambient Lighting -->
+  <div class="ambient-canvas">
+    <div class="spotlight"></div>
+    <div class="canvas-overlay"></div>
+  </div>
+
+  <div class="site-wrapper">
+    <!-- Top Minimal Navigation -->
+    <nav class="top-nav">
+      <div class="brand-logo">
+        <span class="logo-text">클림트 타로</span>
+        <span class="logo-subtext">클림트 회화 영감 타로 아트</span>
+      </div>
+      <div class="user-auth-bar" id="userAuthBar">
+        <button class="btn-text" id="historyModalBtn">운세 보관함</button>
+        <div id="loggedOutState">
+          <button class="btn-text" id="openAuthModalBtn">로그인</button>
+        </div>
+        <div id="loggedInState" class="hidden">
+          <span class="user-email" id="userEmailDisplay">user@example.com</span>
+          <button class="btn-text btn-logout" id="logoutBtn">로그아웃</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Exhibition Scene -->
+    <main class="exhibition-scene">
+      <!-- Step-by-Step Digital Ritual Container (Strict Entrance) -->
+      <section class="digital-ritual-container" id="digitalRitualContainer">
+        <!-- Step 1: Birth Date (Mandatory Time Entrance) -->
+        <div class="ritual-step active" id="ritualStep1">
+          <h1 class="hero-question">
+            오늘,<br>당신의 시간은 어디를 향하고 있나요?
+          </h1>
+          <p class="step-guide">
+            당신이 세상에 도착한 날을 적어주세요.<br>
+            오늘의 질문이 시작되는 시간의 좌표가 됩니다.
+          </p>
+          <div class="birth-input-group">
+            <input type="text" id="birthYear" placeholder="1995" maxlength="4" autocomplete="off" inputmode="numeric">
+            <span class="slash">/</span>
+            <input type="text" id="birthMonth" placeholder="08" maxlength="2" autocomplete="off" inputmode="numeric">
+            <span class="slash">/</span>
+            <input type="text" id="birthDay" placeholder="20" maxlength="2" autocomplete="off" inputmode="numeric">
+          </div>
+          <p class="privacy-notice">* 입력한 생년월일과 질문은 이번 해석에만 참조되며 서버에 저장되지 않습니다.</p>
+          <button class="btn-ritual" id="btnStep1Next">
+            <span>나의 시간을 건넵니다</span>
+          </button>
+        </div>
+
+        <!-- Step 2: Question (My Inquiry) -->
+        <div class="ritual-step hidden" id="ritualStep2">
+          <h2 class="step-title">지금 가장 마음에 머무는 질문은 무엇인가요?</h2>
+          <p class="step-guide">
+            정답을 묻기보다,<br>
+            당신이 정말 마주하고 싶은 것을 적어주세요.
+          </p>
+          <div class="question-input-wrapper">
+            <input type="text" id="userQuestion" placeholder="예: 지금 내가 놓치고 있는 것은 무엇일까?" maxlength="60" autocomplete="off">
+          </div>
+          <button class="btn-ritual" id="btnStep2Next">
+            <span>이 질문을 카드에 맡깁니다</span>
+          </button>
+        </div>
+
+        <!-- Step 3: Seal Question (Press and Hold 1.2s) -->
+        <div class="ritual-step hidden" id="ritualStep3">
+          <h2 class="step-title">질문을 카드에 봉인하는 시간</h2>
+          <p class="step-guide">
+            아래 봉인 버튼을 잠시 길게 누르고 계세요.
+          </p>
+          <div class="seal-button-wrapper">
+            <button class="btn-seal" id="btnSealQuestion">
+              <span class="seal-text">질문을 봉인하려면 잠시 누르세요</span>
+            </button>
+          </div>
+          <p class="seal-complete-msg hidden" id="sealCompleteMsg">✨ 당신의 질문이 카드에 머물렀습니다.</p>
+        </div>
+      </section>
+
+      <!-- Post-Sealing Exhibition Stage (Hidden until Step 3 is completed) -->
+      <div class="post-seal-stage hidden" id="postSealStage">
+        <!-- Mode Selector Tabs (Hidden until sealed) -->
+        <div class="mode-selector">
+          <button class="mode-tab active" id="tabOneCard">
+            <span>오늘의 카드</span>
+          </button>
+          <span class="mode-divider">·</span>
+          <button class="mode-tab" id="tabThreeCards">
+            <span>과거 · 현재 · 미래</span>
+          </button>
+        </div>
+
+        <!-- Action Area: Shuffle Trigger -->
+        <div class="shuffle-area" id="shuffleArea">
+          <button class="shuffle-button" id="shuffleBtn">
+            <span>황금빛 카드 섞기</span>
+          </button>
+        </div>
+
+        <!-- Card Stage Section -->
+        <section class="card-stage" id="cardStage">
+          <!-- Single Card Mode View -->
+          <div class="single-card-view" id="singleCardView">
+            <div class="card-frame-container" id="cardContainer">
+              <div class="card-3d" id="fortuneCard">
+                <!-- Klimt Card Back -->
+                <div class="card-face card-back klimt-card-back-bg">
+                  <div class="card-back-inner">
+                    <div class="tree-of-life-symbol"></div>
+                    <span class="card-back-text">터치하여 카드 뒤집기</span>
+                  </div>
+                </div>
+                <!-- Klimt Card Front -->
+                <div class="card-face card-front">
+                  <div class="card-art-full">
+                    <img id="cardArtImage" src="assets/cards/the-lovers.png" alt="클림트 영감 타로 카드" class="full-card-img">
+                    <div class="card-vignette-overlay"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3-Cards Spread View -->
+          <div class="three-cards-view hidden" id="threeCardsView">
+            <div class="spread-track">
+              <!-- Past Card -->
+              <div class="spread-item" id="pastItem">
+                <div class="spread-header-labels">
+                  <span class="spread-label-en">과거</span>
+                  <span class="spread-label-ko">생명의 뿌리</span>
+                </div>
+                <div class="card-3d mini-3d" id="pastCard" data-card-idx="0">
+                  <div class="card-face card-back klimt-card-back-bg">
+                    <div class="card-back-inner"><div class="tree-of-life-symbol"></div></div>
+                  </div>
+                  <div class="card-face card-front">
+                    <div class="card-art-full">
+                      <img id="pastArtImg" src="assets/cards/the-magician.png" class="full-card-img">
+                      <div class="card-vignette-overlay"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Present Card -->
+              <div class="spread-item" id="presentItem">
+                <div class="spread-header-labels">
+                  <span class="spread-label-en">현재</span>
+                  <span class="spread-label-ko">황금빛 꽃</span>
+                </div>
+                <div class="card-3d mini-3d" id="presentCard" data-card-idx="1">
+                  <div class="card-face card-back klimt-card-back-bg">
+                    <div class="card-back-inner"><div class="tree-of-life-symbol"></div></div>
+                  </div>
+                  <div class="card-face card-front">
+                    <div class="card-art-full">
+                      <img id="presentArtImg" src="assets/cards/the-lovers.png" class="full-card-img">
+                      <div class="card-vignette-overlay"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Future Card -->
+              <div class="spread-item" id="futureItem">
+                <div class="spread-header-labels">
+                  <span class="spread-label-en">미래</span>
+                  <span class="spread-label-ko">영원의 결실</span>
+                </div>
+                <div class="card-3d mini-3d" id="futureCard" data-card-idx="2">
+                  <div class="card-face card-back klimt-card-back-bg">
+                    <div class="card-back-inner"><div class="tree-of-life-symbol"></div></div>
+                  </div>
+                  <div class="card-face card-front">
+                    <div class="card-art-full">
+                      <img id="futureArtImg" src="assets/cards/the-sun.png" class="full-card-img">
+                      <div class="card-vignette-overlay"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mandatory 5-Second Silence & Artwork Observation Prompt -->
+        <div class="contemplation-prompt hidden" id="contemplationPrompt">
+          <p class="contemplation-title">잠시 해석하지 말고, 세 그림을 바라보세요.</p>
+          <div class="contemplation-timer" id="contemplationTimer">5</div>
+          <p class="contemplation-guide">가장 먼저 눈에 들어온 인물의 시선, 자세, 혹은 문양을 고요히 느껴봅니다.</p>
+        </div>
+
+        <!-- Focus Card Selection Prompt (Selecting the actual card image) -->
+        <div class="focus-card-selector hidden" id="focusCardSelector">
+          <p class="focus-prompt-text">어느 그림에서 시선이 가장 오래 멈추었나요?</p>
+          <p class="focus-subhint">위 3장의 카드 그림 중 시선이 머문 그림을 직접 터치해주세요.</p>
+          <div class="focus-selection-feedback hidden" id="focusSelectionFeedback">
+            <span id="focusSelectionText">당신의 시선은 두 번째 그림에 머물렀습니다.</span>
+          </div>
+        </div>
+
+        <!-- Background AI Generation Loading State -->
+        <div class="reading-status hidden" id="aiGenerationStatus" aria-live="polite">
+          <span class="status-pulse"></span>
+          <span id="aiGenerationStatusText">선택하신 그림의 구도와 관찰된 요소를 읽고 있습니다…</span>
+        </div>
+
+        <!-- Six-Part Structured Editorial Reading Result Page -->
+        <section class="editorial-result hidden" id="resultDetailsPanel">
+          <div class="editorial-divider-line"></div>
+          <div class="editorial-header">
+            <span class="editorial-badge">클림트 영감 타로 도록 해설</span>
+            <h2 class="reading-headline" id="connectionInsightHeadline">
+              지금 당신을 흔드는 것은 실제 사건보다, 아직 확인되지 않은 가능성을 머릿속에서 크게 키우는 마음입니다.
+            </h2>
+          </div>
+
+          <!-- Part 1: Visual Fact Observations (과거·현재·미래) -->
+          <div class="reading-layer-box">
+            <span class="layer-title">Ⅰ. 그림 앞에서 (시각적 관찰과 연결)</span>
+            <div class="observation-list" id="layerVisualObservation">
+              <div class="obs-item">
+                <span class="obs-pos">[과거]</span>
+                <span class="obs-fact">인물이 닫힌 문양 안에 머물러 있습니다.</span>
+                <span class="obs-meaning">스스로 정해둔 안전 구역 안에서 상상을 키우던 상태를 가리킵니다.</span>
+              </div>
+              <div class="obs-item">
+                <span class="obs-pos">[현재]</span>
+                <span class="obs-fact">수면의 일부만 달빛에 반사됩니다.</span>
+                <span class="obs-meaning">전체가 아닌 일부분만 보고 판단하려는 상태입니다.</span>
+              </div>
+              <div class="obs-item">
+                <span class="obs-pos">[미래]</span>
+                <span class="obs-fact">정면을 향한 곧은 시선이 수직으로 나타납니다.</span>
+                <span class="obs-meaning">외부의 모호함을 걷어내고 직접 눈으로 확인한 데이터로 수직 축을 세우는 시점입니다.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Part 2: Visual Transition Movement -->
+          <div class="reading-layer-box">
+            <span class="layer-title">Ⅱ. 세 그림의 움직임 (구도와 변화)</span>
+            <p class="layer-narrative" id="layerVisualFlow">
+              첫 번째 그림의 닫힌 형태가 두 번째 그림에서 수면의 부분 반사로 흐려지다가, 세 번째 그림에서 정면을 향한 수직선으로 다시 또렷해집니다.
+            </p>
+          </div>
+
+          <!-- Part 3: Direct Response to Question -->
+          <div class="reading-layer-box">
+            <span class="layer-title">Ⅲ. 당신의 질문에 대한 응답</span>
+            <p class="layer-narrative" id="layerQuestionResponse">
+              질문에 대해 판단을 흐리는 것은 자원 부족이 아니라 확인되지 않은 두려움입니다. 직감을 무시할 필요도, 직감만 믿을 필요도 없이 알고 있는 사실과 추측을 분리하십시오.
+            </p>
+          </div>
+
+          <!-- Part 4: Focus Card Resonance -->
+          <div class="reading-layer-box">
+            <span class="layer-title">Ⅳ. 머문 그림이 건네는 이유</span>
+            <p class="layer-narrative" id="layerFocusCardReason">
+              선택하신 그림에서 확인되는 명확한 경계선이 현재 마음속 구분이 필요한 지점을 지목합니다.
+            </p>
+          </div>
+
+          <!-- Part 5: Actionable 24h Advice -->
+          <div class="ritual-section">
+            <span class="ritual-label">Ⅴ. 오늘의 행동</span>
+            <p class="ritual-content" id="layerActionAdvice">
+              결정하려는 문제를 세 줄(내가 확인한 사실 / 들은 말 / 불안해서 상상한 결과)로 나눠 적으세요. 세 번째 줄을 사실처럼 취급하지 않는 것이 오늘 할 일입니다.
+            </p>
+          </div>
+
+          <!-- Particulars Table Grid -->
+          <div class="particulars-grid">
+            <div class="particular-item">
+              <span class="part-label">행운의 시간</span>
+              <span class="part-val" id="luckyTime">15:00 – 17:00</span>
+            </div>
+            <div class="particular-item">
+              <span class="part-label">행운의 색</span>
+              <span class="part-val" id="luckyColor">앤틱 골드</span>
+            </div>
+            <div class="particular-item">
+              <span class="part-label">행운의 수</span>
+              <span class="part-val" id="luckyItem">7</span>
+            </div>
+          </div>
+
+          <!-- Minimal Action Bar -->
+          <div class="editorial-actions" id="resultActionGroup">
+            <button class="btn-text-action hidden" id="retryAiBtn">
+              해석 다시 불러오기
+            </button>
+            <button class="btn-text-action" id="shareBtn">
+              운세 결과 공유하기
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>구스타프 클림트 영감 타로 전시관 © 2026</p>
+    </footer>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-backdrop hidden" id="authModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeAuthModalBtn">&times;</button>
+      
+      <div class="modal-auth-header">
+        <h3>클림트 보관함 로그인</h3>
+        <p>나만의 클림트 타로 운세 기록을 저장하세요.</p>
+      </div>
+
+      <div class="quick-auth-section">
+        <button class="btn-demo btn-full" id="demoLoginBtn">
+          <span>1초 데모 계정으로 체험하기</span>
+        </button>
+      </div>
+
+      <div class="divider"><span>또는 이메일 로그인</span></div>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active" id="tabLogin">로그인</button>
+        <button class="tab-btn" id="tabSignup">회원가입</button>
+      </div>
+
+      <form class="auth-form" id="authForm">
+        <div class="form-group">
+          <label for="authEmail">이메일 주소</label>
+          <input type="email" id="authEmail" placeholder="example@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="authPassword">비밀번호</label>
+          <input type="password" id="authPassword" placeholder="6자 이상 입력" required minlength="6">
+        </div>
+        <div class="auth-msg hidden" id="authMsg"></div>
+        <button type="submit" class="shuffle-button btn-full" id="authSubmitBtn">로그인</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- History Archive Modal -->
+  <div class="modal-backdrop hidden" id="historyModal">
+    <div class="modal-content history-modal-content">
+      <button class="modal-close" id="closeHistoryModalBtn">&times;</button>
+      <div class="modal-header-title">
+        <h3>클림트 운세 보관함</h3>
+        <p id="historySubtitle">저장된 황금빛 클림트 타로 운세 기록입니다.</p>
+      </div>
+      <div class="history-list" id="historyList">
+        <p class="empty-history">운세 기록을 불러오는 중입니다...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Minimal Toast -->
+  <div class="toast hidden" id="toast">클립보드에 복사되었습니다</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
