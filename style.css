@@ -490,13 +490,13 @@ body {
 }
 
 .showcase-card-frame {
-  width: 200px;
-  height: 310px;
-  margin: 16px 0 20px;
-  border-radius: 6px;
+  width: 160px;
+  height: 250px;
+  margin: 14px 0 18px;
+  border-radius: 5px;
   overflow: hidden;
   border: 1px solid rgba(212, 175, 55, 0.5);
-  box-shadow: 0 16px 40px rgba(182, 146, 74, 0.22);
+  box-shadow: 0 12px 32px rgba(182, 146, 74, 0.2);
 }
 
 .showcase-card-img {
@@ -641,10 +641,10 @@ body {
   perspective: 1200px;
 }
 
-/* Scaled Single Card: 250px x 403px */
+/* Scaled Single Card: 190px x 300px */
 .card-frame-container {
-  width: 250px;
-  height: 403px;
+  width: 190px;
+  height: 300px;
   cursor: pointer;
 }
 
@@ -805,8 +805,8 @@ body {
 }
 
 .mini-3d {
-  width: clamp(220px, 17vw, 250px);
-  aspect-ratio: 0.62;
+  width: clamp(140px, 12vw, 165px);
+  aspect-ratio: 0.63;
   transition: transform 300ms ease, box-shadow 300ms ease;
 }
 
@@ -1221,11 +1221,11 @@ body {
   .spread-track {
     flex-direction: column;
     align-items: center;
-    gap: 28px;
+    gap: 20px;
   }
   .mini-3d {
-    width: 220px;
-    height: 355px;
+    width: 140px;
+    height: 222px;
   }
   .particulars-grid {
     gap: 24px;
