@@ -1297,3 +1297,249 @@ logoutBtn?.addEventListener('click', async () => {
   userEmailDisplay.textContent = '';
   historyList.innerHTML = '<p class="empty-history">로그아웃되었습니다.</p>';
 });
+
+// ==========================================
+// 8. THE FINAL 30-SECOND RITUAL ENGINE
+// ==========================================
+
+// Web Audio API Sound Synthesizer (No External Files Required)
+let audioCtx = null;
+function getAudioContext() {
+  if (!audioCtx && typeof window !== 'undefined') {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+// Sound 1: Soft Paper Flip / Click
+function playPaperSound() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(150, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.08);
+  } catch (e) {}
+}
+
+// Sound 2: Pure Metallic Gold Chime (1.2s Seal Completion)
+function playChimeSound() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+    osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.3); // C6
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 1.2);
+  } catch (e) {}
+}
+
+// Sound 3: Soft Glass Bead Sound (Offering Completion)
+function playGlassSound() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.4);
+  } catch (e) {}
+}
+
+// Final Ritual DOM Elements
+const startFinalRitualBtn = document.getElementById('startFinalRitualBtn');
+const finalRitualContainer = document.getElementById('finalRitualContainer');
+
+const phasePause = document.getElementById('phasePause');
+const pauseHeadlineCopy = document.getElementById('pauseHeadlineCopy');
+const btnGoToSelectPromise = document.getElementById('btnGoToSelectPromise');
+
+const phaseSelectPromise = document.getElementById('phaseSelectPromise');
+const promiseOptions = document.getElementById('promiseOptions');
+
+const phaseSealPromise = document.getElementById('phaseSealPromise');
+const goldPlaque = document.getElementById('goldPlaque');
+const selectedPromiseText = document.getElementById('selectedPromiseText');
+const btnSealPromise = document.getElementById('btnSealPromise');
+const promiseSealedMsg = document.getElementById('promiseSealedMsg');
+
+const phaseOffering = document.getElementById('phaseOffering');
+const btnCustomOffering = document.getElementById('btnCustomOffering');
+const btnFreeFinish = document.getElementById('btnFreeFinish');
+
+const phaseFinalCard = document.getElementById('phaseFinalCard');
+const finalPromiseDisplay = document.getElementById('finalPromiseDisplay');
+const finalCloseNote = document.getElementById('finalCloseNote');
+const btnSavePromise = document.getElementById('btnSavePromise');
+
+let selectedUserPromise = "사람을 만날 약속 하나를 정한다";
+let isPromiseSealed = false;
+
+// 1. Start Final Ritual
+startFinalRitualBtn?.addEventListener('click', () => {
+  playPaperSound();
+  const headline = connectionInsightHeadline?.innerText.replace(/\n/g, ' ') || "당신에게 필요한 것은 더 많은 준비가 아니라, 닫힌 생활의 경계 밖으로 한 번 움직이는 일입니다.";
+  if (pauseHeadlineCopy) pauseHeadlineCopy.textContent = `"${headline}"`;
+
+  finalRitualContainer?.classList.remove('hidden');
+  finalRitualContainer?.scrollIntoView({ behavior: 'smooth' });
+
+  // Dynamic options in Phase 2
+  const adviceText = layerActionAdvice?.textContent || "사람을 만날 약속 하나를 정한다";
+  const questionRespText = layerQuestionResponse?.textContent ? layerQuestionResponse.textContent.substring(0, 24) + '...' : "내가 확인한 사실과 두려움을 구분한다";
+
+  if (promiseOptions) {
+    promiseOptions.innerHTML = `
+      <button class="btn-promise-option active-opt" data-promise="${adviceText}">
+        <span>${adviceText}</span>
+      </button>
+      <button class="btn-promise-option" data-promise="${questionRespText}">
+        <span>${questionRespText}</span>
+      </button>
+      <button class="btn-promise-option" data-promise="미뤄온 대화를 먼저 시작한다">
+        <span>미뤄온 대화를 먼저 시작한다</span>
+      </button>
+    `;
+
+    // Re-bind option click listeners
+    promiseOptions.querySelectorAll('.btn-promise-option').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        playPaperSound();
+        promiseOptions.querySelectorAll('.btn-promise-option').forEach(b => b.classList.remove('active-opt'));
+        const targetBtn = e.currentTarget;
+        targetBtn.classList.add('active-opt');
+        selectedUserPromise = targetBtn.getAttribute('data-promise') || adviceText;
+
+        // Fades into Phase 3 (Seal Promise) after short pause
+        setTimeout(() => {
+          phaseSelectPromise?.classList.add('hidden');
+          if (selectedPromiseText) selectedPromiseText.textContent = selectedUserPromise;
+          phaseSealPromise?.classList.remove('hidden');
+        }, 400);
+      });
+    });
+  }
+});
+
+// Phase 1 -> Phase 2
+btnGoToSelectPromise?.addEventListener('click', () => {
+  playPaperSound();
+  phasePause?.classList.add('hidden');
+  phaseSelectPromise?.classList.remove('hidden');
+});
+
+// Phase 3: Seal Promise 1.2s Hold Handler
+let promiseHoldTimer = null;
+let promiseHoldStartTime = 0;
+
+function startPromiseHold(e) {
+  if (e.type === 'touchstart') e.preventDefault();
+  if (isPromiseSealed) return;
+
+  promiseHoldStartTime = Date.now();
+  const sealText = btnSealPromise?.querySelector('.seal-promise-text');
+  if (sealText) sealText.textContent = "약속을 봉인하는 중 (1.2초)...";
+  btnSealPromise?.classList.add('holding');
+
+  promiseHoldTimer = setTimeout(() => {
+    isPromiseSealed = true;
+    playChimeSound(); // Play metallic gold chime!
+    goldPlaque?.classList.add('sealed-glow');
+    btnSealPromise.disabled = true;
+    btnSealPromise.classList.remove('holding');
+    btnSealPromise.classList.add('hidden');
+    promiseSealedMsg?.classList.remove('hidden');
+
+    setTimeout(() => {
+      phaseSealPromise?.classList.add('hidden');
+      phaseOffering?.classList.remove('hidden');
+    }, 1400);
+  }, 1200);
+}
+
+function cancelPromiseHold() {
+  if (isPromiseSealed) return;
+  if (promiseHoldTimer) {
+    clearTimeout(promiseHoldTimer);
+    promiseHoldTimer = null;
+  }
+  const elapsed = Date.now() - promiseHoldStartTime;
+  if (elapsed < 1200) {
+    const sealText = btnSealPromise?.querySelector('.seal-promise-text');
+    if (sealText) sealText.textContent = "잠시 눌러 약속을 봉인합니다";
+    btnSealPromise?.classList.remove('holding');
+    showToast("🔮 1.2초 동안 떼지 않고 눌러주셔야 약속이 봉인됩니다.");
+  }
+}
+
+btnSealPromise?.addEventListener('mousedown', startPromiseHold);
+btnSealPromise?.addEventListener('touchstart', startPromiseHold);
+btnSealPromise?.addEventListener('mouseup', cancelPromiseHold);
+btnSealPromise?.addEventListener('mouseleave', cancelPromiseHold);
+btnSealPromise?.addEventListener('touchend', cancelPromiseHold);
+btnSealPromise?.addEventListener('touchcancel', cancelPromiseHold);
+
+// Phase 4: Offering Tiers Handling
+document.querySelectorAll('.offering-card').forEach(card => {
+  card.addEventListener('click', (e) => {
+    playGlassSound();
+    const amount = e.currentTarget.getAttribute('data-amount');
+    const formatted = parseInt(amount, 10).toLocaleString();
+    completeOffering(`당신의 마음(${formatted}원)을 받았습니다.\n운세는 여기에서 끝나지만, 당신이 선택한 행동은 지금부터 시작됩니다.`);
+  });
+});
+
+btnCustomOffering?.addEventListener('click', () => {
+  const custom = prompt("원하시는 복채 금액을 입력해주세요 (원):", "3000");
+  if (custom && !isNaN(custom)) {
+    playGlassSound();
+    completeOffering(`당신의 마음(${parseInt(custom, 10).toLocaleString()}원)을 받았습니다.\n운세는 여기에서 끝나지만, 당신이 선택한 행동은 지금부터 시작됩니다.`);
+  }
+});
+
+btnFreeFinish?.addEventListener('click', () => {
+  playPaperSound();
+  completeOffering("당신의 선택을 기억해주세요.\n오늘의 리딩은 여기에서 닫힙니다.");
+});
+
+function completeOffering(messageText) {
+  phaseOffering?.classList.add('hidden');
+  if (finalPromiseDisplay) finalPromiseDisplay.textContent = selectedUserPromise;
+  if (finalCloseNote) finalCloseNote.textContent = messageText;
+  phaseFinalCard?.classList.remove('hidden');
+  phaseFinalCard?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Final Save Promise
+btnSavePromise?.addEventListener('click', () => {
+  playPaperSound();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(`[클림트 타로 오늘의 약속]\n"${selectedUserPromise}"`);
+  }
+  showToast("✨ 오늘의 약속이 클립보드에 복사되었습니다.");
+});

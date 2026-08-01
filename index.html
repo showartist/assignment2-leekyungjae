@@ -311,12 +311,102 @@
 
           <!-- Minimal Action Bar -->
           <div class="editorial-actions" id="resultActionGroup">
-            <button class="btn-text-action hidden" id="retryAiBtn">
-              해석 다시 불러오기
+            <button class="btn-ritual-start" id="startFinalRitualBtn">
+              <span>오늘의 약속 선택하기 (마지막 30초 리추얼)</span>
             </button>
             <button class="btn-text-action" id="shareBtn">
               운세 결과 공유하기
             </button>
+          </div>
+        </section>
+
+        <!-- Final 30-Second Commitment & Gratitude Ritual Section -->
+        <section class="final-ritual-container hidden" id="finalRitualContainer">
+          <div class="ritual-divider-gold"></div>
+
+          <!-- Phase 1: Silence & Headline Pause -->
+          <div class="ritual-phase active" id="phasePause">
+            <p class="pause-focus-text" id="pauseHeadlineCopy">
+              "당신에게 필요한 것은 더 많은 준비가 아니라, 닫힌 생활의 경계 밖으로 한 번 움직이는 일입니다."
+            </p>
+            <p class="pause-subhint">이 문장 앞에 잠시 머물러주세요.</p>
+            <button class="btn-phase-next" id="btnGoToSelectPromise">
+              <span>내 삶으로 가져갈 문장 고르기</span>
+            </button>
+          </div>
+
+          <!-- Phase 2: Select Promise Sentence -->
+          <div class="ritual-phase hidden" id="phaseSelectPromise">
+            <h3 class="phase-title">오늘, 어떤 문장을 현실로 가져가시겠습니까?</h3>
+            <p class="phase-sub">직접 고르는 순간, 이 문장은 당신의 약속이 됩니다.</p>
+            <div class="promise-options" id="promiseOptions">
+              <button class="btn-promise-option active-opt" data-promise="사람을 만날 약속 하나를 정한다">
+                <span>사람을 만날 약속 하나를 정한다</span>
+              </button>
+              <button class="btn-promise-option" data-promise="내가 확인한 사실과 두려움을 구분한다">
+                <span>내가 확인한 사실과 두려움을 구분한다</span>
+              </button>
+              <button class="btn-promise-option" data-promise="미뤄온 대화를 먼저 시작한다">
+                <span>미뤄온 대화를 먼저 시작한다</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Phase 3: Seal Promise (1.2s Hold) -->
+          <div class="ritual-phase hidden" id="phaseSealPromise">
+            <div class="gold-plaque" id="goldPlaque">
+              <span class="plaque-label">TODAY'S PROMISE</span>
+              <p class="plaque-text" id="selectedPromiseText">사람을 만날 약속 하나를 정한다</p>
+              <div class="plaque-border-line" id="plaqueBorderLine"></div>
+            </div>
+            <p class="phase-guide">이것을 오늘의 약속으로 남기시겠습니까?</p>
+            <div class="seal-button-wrapper">
+              <button class="btn-seal-promise" id="btnSealPromise">
+                <span class="seal-promise-text">잠시 눌러 약속을 봉인합니다</span>
+              </button>
+            </div>
+            <p class="promise-sealed-msg hidden" id="promiseSealedMsg">✨ 당신의 선택이 기록되었습니다.</p>
+          </div>
+
+          <!-- Phase 4: Gratitude Offering (복채) -->
+          <div class="ritual-phase hidden" id="phaseOffering">
+            <div class="offering-header">
+              <h3 class="offering-title">이 리딩을 현실로 가져가고 싶은 만큼,<br>복채를 정해주세요.</h3>
+              <p class="offering-sub">복채는 운명을 사는 값이 아닙니다.<br>오늘 발견한 문장과 이 경험에 남기는 마음입니다.</p>
+            </div>
+
+            <div class="offering-tiers">
+              <button class="offering-card" data-amount="1000">
+                <span class="tier-name">작은 감사</span>
+                <span class="tier-price">1,000원</span>
+              </button>
+              <button class="offering-card featured" data-amount="3000">
+                <span class="tier-name">오래 남은 문장</span>
+                <span class="tier-price">3,000원</span>
+              </button>
+              <button class="offering-card" data-amount="5000">
+                <span class="tier-name">깊이 머문 리딩</span>
+                <span class="tier-price">5,000원</span>
+              </button>
+            </div>
+
+            <div class="offering-actions">
+              <button class="btn-custom-offering" id="btnCustomOffering">직접 정하기</button>
+              <button class="btn-free-finish" id="btnFreeFinish">오늘은 마음만 남기고 마칩니다</button>
+            </div>
+          </div>
+
+          <!-- Phase 5: Ritual Close & Final Card -->
+          <div class="ritual-phase hidden" id="phaseFinalCard">
+            <div class="final-card-box">
+              <span class="final-badge">MY COMMITMENT</span>
+              <h2 class="final-title">오늘의 약속</h2>
+              <p class="final-promise-display" id="finalPromiseDisplay">이번 주 안에 사람을 만나는 약속 하나를 정한다.</p>
+              <p class="final-close-note" id="finalCloseNote">운세는 여기에서 끝나지만, 당신이 선택한 행동은 지금부터 시작됩니다.</p>
+              <div class="final-action-group">
+                <button class="btn-save-promise" id="btnSavePromise">나의 약속 저장하기</button>
+              </div>
+            </div>
           </div>
         </section>
       </div>

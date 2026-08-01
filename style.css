@@ -1234,3 +1234,368 @@ body {
     font-size: 28px;
   }
 }
+
+/* ==========================================
+ * THE FINAL 30-SECOND RITUAL STYLING
+ * ========================================== */
+.final-ritual-container {
+  width: 100%;
+  max-width: 680px;
+  margin: 40px auto 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: fadeInStep 0.8s ease-out;
+}
+
+.ritual-divider-gold {
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
+  margin-bottom: 36px;
+}
+
+.ritual-phase {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: fadeInStep 0.6s ease-out;
+}
+
+/* Phase 1: Silence & Headline Pause */
+.pause-focus-text {
+  font-size: 1.15rem;
+  line-height: 1.85;
+  color: #fff;
+  font-weight: 500;
+  max-width: 600px;
+  word-break: keep-all;
+  padding: 16px 20px;
+  background: rgba(28, 23, 17, 0.4);
+  border-left: 2px solid var(--gold);
+}
+
+.pause-subhint {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.btn-phase-next,
+.btn-ritual-start {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, rgba(182, 146, 74, 0.25) 0%, rgba(30, 25, 20, 0.8) 100%);
+  border: 1px solid var(--gold);
+  color: #f4efe6;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 3px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-phase-next:hover,
+.btn-ritual-start:hover {
+  background: var(--gold);
+  color: #0b0907;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(182, 146, 74, 0.3);
+}
+
+/* Phase 2: Select Promise Options */
+.phase-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gold-soft);
+}
+
+.phase-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.promise-options {
+  width: 100%;
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-promise-option {
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(24, 20, 16, 0.6);
+  border: 1px solid rgba(182, 146, 74, 0.3);
+  color: #e8dfd1;
+  font-size: 0.98rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  word-break: keep-all;
+}
+
+.btn-promise-option:hover,
+.btn-promise-option.active-opt {
+  background: rgba(182, 146, 74, 0.18);
+  border-color: var(--gold);
+  color: #fff;
+  transform: scale(1.01);
+  box-shadow: 0 6px 20px rgba(182, 146, 74, 0.15);
+}
+
+/* Phase 3: Gold Plaque & 1.2s Hold Seal */
+.gold-plaque {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  padding: 32px 28px;
+  background: radial-gradient(circle at center, rgba(38, 31, 23, 0.9) 0%, rgba(16, 13, 10, 0.95) 100%);
+  border: 1px solid rgba(182, 146, 74, 0.4);
+  border-radius: 6px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  margin: 10px 0;
+  transition: all 0.5s ease;
+}
+
+.gold-plaque.sealed-glow {
+  border-color: var(--gold);
+  box-shadow: 0 0 35px rgba(212, 175, 55, 0.35);
+}
+
+.plaque-label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--gold-soft);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.plaque-text {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.btn-seal-promise {
+  padding: 16px 36px;
+  background: linear-gradient(135deg, rgba(182, 146, 74, 0.3) 0%, rgba(20, 16, 12, 0.9) 100%);
+  border: 1px solid var(--gold);
+  color: var(--gold-soft);
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.btn-seal-promise.holding {
+  background: var(--gold);
+  color: #0b0907;
+  transform: scale(0.98);
+  box-shadow: 0 0 25px rgba(182, 146, 74, 0.6);
+}
+
+.promise-sealed-msg {
+  font-size: 1.05rem;
+  color: var(--gold-soft);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Phase 4: Offering (복채) Tiers Layout */
+.offering-header {
+  margin-bottom: 12px;
+}
+
+.offering-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.offering-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.offering-tiers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin: 16px 0;
+}
+
+.offering-card {
+  flex: 1;
+  padding: 20px 14px;
+  background: rgba(26, 21, 16, 0.7);
+  border: 1px solid rgba(182, 146, 74, 0.3);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.offering-card:hover {
+  background: rgba(182, 146, 74, 0.15);
+  border-color: var(--gold-soft);
+  transform: translateY(-2px);
+}
+
+.offering-card.featured {
+  background: linear-gradient(135deg, rgba(182, 146, 74, 0.22) 0%, rgba(26, 21, 16, 0.9) 100%);
+  border: 1.5px solid var(--gold);
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(182, 146, 74, 0.2);
+}
+
+.tier-name {
+  font-size: 0.85rem;
+  color: #d1c5b4;
+}
+
+.tier-price {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gold-soft);
+}
+
+.offering-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-custom-offering {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-free-finish {
+  background: transparent;
+  border: none;
+  color: #c5b9a8;
+  font-size: 0.92rem;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: color 0.2s ease;
+}
+
+.btn-free-finish:hover {
+  color: #fff;
+}
+
+/* Phase 5: Final Commitment Card Box */
+.final-card-box {
+  width: 100%;
+  max-width: 520px;
+  padding: 36px 30px;
+  background: linear-gradient(135deg, rgba(32, 26, 20, 0.95) 0%, rgba(14, 11, 8, 0.98) 100%);
+  border: 1.5px solid var(--gold);
+  border-radius: 6px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.final-badge {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.final-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.final-promise-display {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--gold-soft);
+  line-height: 1.7;
+  padding: 16px 20px;
+  background: rgba(182, 146, 74, 0.08);
+  border-left: 2px solid var(--gold);
+  width: 100%;
+  word-break: keep-all;
+}
+
+.final-close-note {
+  font-size: 0.92rem;
+  color: #d1c5b4;
+  line-height: 1.7;
+  margin: 10px 0;
+  white-space: pre-line;
+}
+
+.btn-save-promise {
+  padding: 14px 36px;
+  background: var(--gold);
+  color: #0b0907;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(182, 146, 74, 0.3);
+  transition: all 0.25s ease;
+}
+
+.btn-save-promise:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(182, 146, 74, 0.45);
+}
+
+@media (max-width: 768px) {
+  .offering-tiers {
+    flex-direction: column;
+    width: 100%;
+  }
+  .offering-card {
+    width: 100%;
+  }
+  .offering-card.featured {
+    transform: scale(1);
+  }
+}
