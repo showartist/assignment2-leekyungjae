@@ -709,6 +709,58 @@ tabThreeCards?.addEventListener('click', () => {
 const layerFocusCardReason = document.getElementById('layerFocusCardReason');
 
 // 8. Six-Part Artwork AI Reading Engine Pipeline (Strict API Payload)
+// Deterministic Seed-based Card Shuffling (Point 8)
+function cyrb128(str) {
+  let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i);
+    h1 = h2 ^ Math.imul(h1 ^ ch, 597399067);
+    h2 = h3 ^ Math.imul(h2 ^ ch, 2869860223);
+    h3 = h4 ^ Math.imul(h3 ^ ch, 951274213);
+    h4 = h1 ^ Math.imul(h4 ^ ch, 2716044179);
+  }
+  h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+  h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860223);
+  h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+  h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+  return (h1^h2^h3^h4) >>> 0;
+}
+
+function sfc32(a, b, c, d) {
+  return function() {
+    a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
+    var t = (a + b | 0) + d | 0;
+    d = d + 1 | 0;
+    a = b ^ b >>> 9;
+    b = c + (c << 3) | 0;
+    c = (c << 21 | c >>> 11);
+    c = c + t | 0;
+    return (t >>> 0) / 4294967296;
+  }
+}
+
+function getSeededRandom() {
+  const y = birthYear?.value.trim() || '';
+  const m = birthMonth?.value.trim() || '';
+  const d = birthDay?.value.trim() || '';
+  const q = (userQuestion?.value.trim() || '').toLowerCase().replace(/\s+/g, '');
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const seedString = `${y}${m}${d}_${q}_${todayStr}`;
+  const seed = cyrb128(seedString);
+  return sfc32(seed, seed ^ 0xDEADBEEF, seed ^ 0xCAFEBABE, seed ^ 0x811C9DC5);
+}
+
+function drawCardsSeeded(count) {
+  const rng = getSeededRandom();
+  const shuffled = [...TAROT_CARDS];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, count);
+}
+
+// 8. Six-Part Artwork AI Reading Engine Pipeline (Strict API Payload)
 async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
   if (!validateRitualPipeline()) return;
   currentDrawnCards = drawnCards;
@@ -721,11 +773,19 @@ async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
   retryAiBtn?.classList.add('hidden');
   resultActionGroup?.classList.add('hidden');
 
+  // Point 12: Clear old reading outputs before AI response returns
+  if (connectionInsightHeadline) connectionInsightHeadline.textContent = "AI가 세 회화의 구도와 시선 이동을 조율 중입니다...";
+  if (layerVisualFlow) layerVisualFlow.textContent = "";
+  if (layerFocusCardReason) layerFocusCardReason.textContent = "";
+  if (layerQuestionResponse) layerQuestionResponse.textContent = "";
+  if (layerActionAdvice) layerActionAdvice.textContent = "";
+
   try {
     const primaryCard = drawnCards[focusIndex] || drawnCards[0];
     const questionText = userQuestion?.value.trim() || '';
     const birthDateText = `${birthYear?.value.trim()}.${birthMonth?.value.trim()}.${birthDay?.value.trim()}`;
 
+    // Point 11: Pass birthDate, question, 3 cards visibleFacts, visualMood, focusCardId
     const response = await fetch('/api/generate-fortune', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -734,9 +794,12 @@ async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
         birthDate: birthDateText,
         mode: mode,
         focusCardIndex: focusIndex,
+        focusCardId: primaryCard.id,
         cards: drawnCards.map(c => ({
           id: c.id,
           name: c.nameKo,
+          visibleFacts: c.artwork.visibleElements,
+          visualMood: c.artwork.visualTension || c.artwork.composition,
           artwork: c.artwork
         }))
       })
@@ -745,13 +808,14 @@ async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
     const data = await response.json();
 
     if (data.success) {
+      // Point 13 & 14: Populate structured AI response without innerHTML DOM rebuilding
       const headlineText = data.headline || primaryCard.talismanMessages[0];
       if (connectionInsightHeadline) {
         connectionInsightHeadline.innerHTML = headlineText.replace(/(, |\.)/g, '$1<br>');
       }
 
-      // Populate Card-level Captions directly under the 3 spread cards
-      const obs = data.observations || {};
+      // Card-level Captions (Point 9: Max 2 sentences under each card)
+      const obs = data.visualReadings || data.observations || {};
       const pastObs = obs.past || (Array.isArray(obs) ? obs[0] : {});
       const presObs = obs.present || (Array.isArray(obs) ? obs[1] : {});
       const futObs = obs.future || (Array.isArray(obs) ? obs[2] : {});
@@ -771,43 +835,37 @@ async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
       if (futFactEl) futFactEl.textContent = futObs.fact || futObs.visibleFact || drawnCards[2]?.artwork.visibleElements[0] || '';
       if (futMeanEl) futMeanEl.textContent = futObs.meaning || '내부의 준비가 실제 만남으로 이동할 가능성.';
 
-      // Layer 2: Visual Transition Movement
+      // Three Artwork Flow
       if (layerVisualFlow) {
-        layerVisualFlow.textContent = data.visualTransition || data.visualFlow || `${drawnCards[0].nameKo}의 구도에서 시작해 ${drawnCards[1].nameKo}의 중심을 거쳐 ${drawnCards[2].nameKo}의 수직 확장 구도로 변화합니다.`;
+        layerVisualFlow.textContent = data.threeArtworkFlow || data.visualTransition || data.visualFlow || `${drawnCards[0].nameKo}에서 시작해 ${drawnCards[1].nameKo}를 거쳐 ${drawnCards[2].nameKo}로 흐름이 이동합니다.`;
       }
 
-      // Focus Card Spotlight Showcase (Chosen Card Highlight & 35%+ Deep Reading)
-      const focusShowcaseImg = document.getElementById('focusShowcaseImg');
       const focusShowcaseTitle = document.getElementById('focusShowcaseTitle');
-      if (focusShowcaseImg) {
-        const cardImgName = primaryCard.id + '.png';
-        focusShowcaseImg.src = `assets/cards/${cardImgName}`;
-      }
       if (focusShowcaseTitle) {
         const posName = focusIndex === 0 ? 'I. PAST — 과거' : focusIndex === 1 ? 'II. PRESENT — 현재' : 'III. FUTURE — 미래';
-        focusShowcaseTitle.textContent = `${posName} · ${primaryCard.nameKo}`;
+        focusShowcaseTitle.textContent = `${posName} · ${primaryCard.nameKo} (당신의 시선이 머문 그림)`;
       }
 
-      // Focus Card Deep Reading (Primary Reading - 35%+ of Volume)
+      // Focus Card Deep Reading
       if (layerFocusCardReason) {
         layerFocusCardReason.textContent = data.focusCardReading || data.focusCardReason || "선택하신 그림의 특정 시각적 구도와 인물의 몸짓이 질문자의 현재 상태와 닮아 있습니다.";
       }
 
-      // Layer 4: Direct Question Response
+      // Question Response
       if (layerQuestionResponse) {
         layerQuestionResponse.textContent = data.questionResponse || primaryCard.meaning;
       }
 
-      // Layer 5: Action Advice (24h Actionable Single Step)
+      // Action Advice
       if (layerActionAdvice) {
-        layerActionAdvice.textContent = data.actionAdvice || primaryCard.actionAdvice;
+        layerActionAdvice.textContent = data.action || data.actionAdvice || primaryCard.actionAdvice;
       }
 
       if (luckyTime) luckyTime.textContent = primaryCard.lucky.time;
       if (luckyColor) luckyColor.textContent = primaryCard.lucky.color;
       if (luckyItem) luckyItem.textContent = primaryCard.lucky.number;
 
-      // Save to Supabase (Only question and card names saved, birthDate is strictly NOT saved)
+      // Save to Supabase
       saveFortuneToSupabase({
         mode: mode,
         cards: drawnCards.map(c => ({ id: c.id, name: c.nameKo })),
@@ -819,7 +877,7 @@ async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
         question: questionText
       });
 
-      // Show Editorial Result Section & Smooth Scroll after 0.8s pause
+      // Show Editorial Result Section via classList
       setTimeout(() => {
         aiGenerationStatus?.classList.add('hidden');
         resultDetailsPanel.classList.remove('hidden');
@@ -948,7 +1006,7 @@ function handleThreeCardsFlip() {
   if (isShuffling) return;
   isShuffling = true;
 
-  const [past, present, future] = drawCards(3);
+  const [past, present, future] = drawCardsSeeded(3);
   currentDrawnCards = [past, present, future];
 
   pastCard.classList.remove('flipped');

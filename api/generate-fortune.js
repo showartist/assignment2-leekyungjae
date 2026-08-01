@@ -140,7 +140,15 @@ Output MUST be valid JSON matching this exact structure:
       success: true,
       source: 'openrouter',
       model: 'google/gemini-2.5-flash',
-      ...cleanedContent
+      headline: cleanedContent.headline,
+      visualReadings: cleanedContent.visualReadings || cleanedContent.observations,
+      observations: cleanedContent.observations || cleanedContent.visualReadings,
+      threeArtworkFlow: cleanedContent.threeArtworkFlow || cleanedContent.visualTransition,
+      visualTransition: cleanedContent.visualTransition || cleanedContent.threeArtworkFlow,
+      focusCardReading: cleanedContent.focusCardReading,
+      questionResponse: cleanedContent.questionResponse,
+      action: cleanedContent.action || cleanedContent.actionAdvice,
+      actionAdvice: cleanedContent.actionAdvice || cleanedContent.action
     });
   } catch (err) {
     console.error("Server error:", err);

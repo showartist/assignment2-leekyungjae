@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260802_0058">
+  <link rel="stylesheet" href="style.css?v=20260802_0101">
 
   <!-- Supabase JS Client SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -101,6 +101,16 @@
 
       <!-- Post-Sealing Exhibition Stage (Hidden until Step 3 is completed) -->
       <div class="post-seal-stage hidden" id="postSealStage">
+        <!-- Sealed Summary Plaque (Point 7 Requirement) -->
+        <div class="sealed-summary-card hidden" id="sealedSummaryCard">
+          <span class="sealed-badge">RITUAL COMPLETED</span>
+          <div class="sealed-details">
+            <span class="sealed-birth" id="sealedBirthDisplay">생년월일: -</span>
+            <p class="sealed-question" id="sealedQuestionDisplay">"-"</p>
+          </div>
+          <p class="sealed-subnote">당신의 시간이 질문과 함께 카드에 머물렀습니다.</p>
+        </div>
+
         <!-- Mode Selector Tabs (Hidden until sealed) -->
         <div class="mode-selector">
           <button class="mode-tab active" id="tabOneCard">
@@ -468,6 +478,6 @@
   <!-- Minimal Toast -->
   <div class="toast hidden" id="toast">클립보드에 복사되었습니다</div>
 
-  <script src="script.js?v=20260802_0058"></script>
+  <script src="script.js?v=20260802_0101"></script>
 </body>
 </html>

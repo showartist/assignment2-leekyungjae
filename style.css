@@ -589,26 +589,30 @@ body {
 }
 
 /* 5. Restrained Antique Gold Shuffle Button (Fill on Hover) */
-.shuffle-button {
+.shuffle-button, #shuffleBtn {
   padding: 15px 34px;
   border: 1px solid rgba(209, 184, 120, 0.65);
-  background: rgba(182, 146, 74, 0.08);
-  color: #d8c18a;
+  background: rgba(182, 146, 74, 0.15) !important;
+  color: #d8c18a !important;
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.18em;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   transition: all 250ms ease;
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
 }
 
-.shuffle-button:hover {
-  background: #b6924a;
-  color: #0b0907;
+.shuffle-button:hover, #shuffleBtn:hover {
+  background: #b6924a !important;
+  color: #0b0907 !important;
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(182, 146, 74, 0.25);
+  box-shadow: 0 14px 40px rgba(182, 146, 74, 0.35);
 }
 
 /* 2. Scaled Cards Stage & Spotlight */
@@ -772,19 +776,22 @@ body {
   width: 100%;
 }
 
-/* 3장 스프레드: 데스크톱에서 반드시 가로 배치 */
+/* 3장 스프레드: 데스크톱 3열 그리드 고정 (max-width 1080px, gap 36px) */
 .spread-track {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 210px);
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   justify-content: center;
   align-items: start;
-  gap: 30px;
+  gap: 36px;
 }
 
 .spread-item {
-  width: 210px;
-  min-width: 0;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -813,10 +820,63 @@ body {
 }
 
 .mini-3d {
-  width: 210px;
+  width: 100%;
+  max-width: 280px;
   aspect-ratio: 0.625;
   margin: 0;
   transition: transform 300ms ease, box-shadow 300ms ease;
+}
+
+.card-face,
+.card-art-full {
+  width: 100%;
+  height: 100%;
+}
+
+.full-card-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 선택된 기존 카드만 강조 */
+.spread-item.is-focus {
+  transform: translateY(-8px);
+}
+
+.spread-item.is-focus .mini-3d {
+  box-shadow:
+    0 0 0 1px rgba(196, 157, 71, 0.85),
+    0 18px 45px rgba(0, 0, 0, 0.55),
+    0 0 32px rgba(180, 137, 48, 0.22);
+}
+
+/* 카드 관찰 문장 캡션 (최대 2문장, 14px, line-height 1.7, max-width 280px) */
+.card-caption-block {
+  width: 100%;
+  max-width: 280px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+  padding: 8px 6px;
+  background: rgba(22, 18, 14, 0.5);
+  border-top: 1px solid rgba(182, 146, 74, 0.3);
+}
+
+.caption-fact {
+  font-size: 14px;
+  font-weight: 500;
+  color: #f1ebd9;
+  line-height: 1.7;
+}
+
+.caption-meaning {
+  font-size: 13px;
+  color: #b5a995;
+  line-height: 1.6;
 }
 
 .card-face,
@@ -1247,15 +1307,6 @@ body {
 
 /* Mobile Responsive Ergonomics */
 @media (max-width: 768px) {
-  .spread-track {
-    flex-direction: row;
-    justify-content: center;
-    gap: 12px;
-  }
-  .mini-3d {
-    width: 110px;
-    height: 175px;
-  }
   .particulars-grid {
     gap: 16px;
   }
@@ -1616,25 +1667,71 @@ body {
   box-shadow: 0 12px 32px rgba(182, 146, 74, 0.45);
 }
 
-@media (max-width: 760px) {
+/* Sealed Summary Plaque (Point 7 Requirement) */
+.sealed-summary-card {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 28px;
+  padding: 20px 24px;
+  background: rgba(28, 23, 17, 0.45);
+  border: 1px solid rgba(182, 146, 74, 0.4);
+  border-radius: 4px;
+  text-align: center;
+  animation: fadeInStep 0.6s ease;
+}
+
+.sealed-badge {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.sealed-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.sealed-birth {
+  font-size: 0.88rem;
+  color: var(--gold-soft);
+}
+
+.sealed-question {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sealed-subnote {
+  font-size: 0.85rem;
+  color: #b5a995;
+}
+
+@media (max-width: 720px) {
   .spread-track {
-    display: flex;
-    justify-content: flex-start;
-    gap: 18px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding: 0 24px 20px;
-    -webkit-overflow-scrolling: touch;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 28px;
+    padding: 0 16px;
   }
 
   .spread-item {
-    flex: 0 0 72vw;
+    width: 100%;
     max-width: 280px;
-    scroll-snap-align: center;
+    margin: 0 auto;
   }
 
   .mini-3d {
     width: 100%;
+  }
+
+  .card-caption-block {
+    max-width: 280px;
   }
 
   .editorial-result {
