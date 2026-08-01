@@ -1,0 +1,17 @@
+AI_FILM_FORENSICS/
+AI_Agent_학습교재/
+sources/
+*.mp4
+*.vtt
+*.xml
+yt_initial_data.json
+MANUAL_INPUT_REQUIRED.md
+AI_작업일지.md
+AI_*.md
+consistency_memo.md
+model_comparison.md
+production_log.md
+crop_klimt_cards.py
+AI_프롬프트_스크랩북.md
+node_modules/
+.git/
