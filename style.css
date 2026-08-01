@@ -490,13 +490,13 @@ body {
 }
 
 .showcase-card-frame {
-  width: 160px;
-  height: 250px;
-  margin: 14px 0 18px;
-  border-radius: 5px;
+  width: 130px;
+  height: 200px;
+  margin: 12px 0 16px;
+  border-radius: 4px;
   overflow: hidden;
   border: 1px solid rgba(212, 175, 55, 0.5);
-  box-shadow: 0 12px 32px rgba(182, 146, 74, 0.2);
+  box-shadow: 0 10px 24px rgba(182, 146, 74, 0.2);
 }
 
 .showcase-card-img {
@@ -641,10 +641,10 @@ body {
   perspective: 1200px;
 }
 
-/* Scaled Single Card: 190px x 300px */
+/* Scaled Single Card: 150px x 240px */
 .card-frame-container {
-  width: 190px;
-  height: 300px;
+  width: 150px;
+  height: 240px;
   cursor: pointer;
 }
 
@@ -805,7 +805,7 @@ body {
 }
 
 .mini-3d {
-  width: clamp(140px, 12vw, 165px);
+  width: clamp(110px, 10vw, 135px);
   aspect-ratio: 0.63;
   transition: transform 300ms ease, box-shadow 300ms ease;
 }
@@ -1219,19 +1219,19 @@ body {
 /* Mobile Responsive Ergonomics */
 @media (max-width: 768px) {
   .spread-track {
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
   }
   .mini-3d {
-    width: 140px;
-    height: 222px;
+    width: 110px;
+    height: 175px;
   }
   .particulars-grid {
-    gap: 24px;
+    gap: 16px;
   }
   .hero-question {
-    font-size: 28px;
+    font-size: 24px;
   }
 }
 
