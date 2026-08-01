@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     const fallbackResponse = {
       success: true,
       source: 'smart-fallback',
-      headline: `당신은 관계와 변화를 받아들일 준비가 되어 있습니다. 지금 필요한 것은 준비가 아니라, 닫힌 경계 밖으로 한 걸음 움직이는 일입니다.`,
+      headline: `당신은 질문과 변화를 마주할 준비가 되어 있습니다. 지금 필요한 것은 머뭇거림이 아니라, 경계 밖으로 한 걸음 움직이는 일입니다.`,
       observations: {
         past: {
           fact: cards && cards[0] ? `${cards[0].nameKo}: 황금 문양으로 몸을 감싼 정적인 자세.` : "황금 문양으로 몸을 감싼 정적인 자세.",
@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
         },
         present: {
           fact: cards && cards[1] ? `${cards[1].nameKo}: 몸의 일부가 드러났으나 타원형 테두리 안에 머묾.` : "몸의 일부가 드러났으나 타원형 테두리 안에 머묾.",
-          meaning: "마음은 열렸지만 실제 일상과 행동의 반경은 여전히 닫혀 있음."
+          meaning: "생각은 정돈되었지만 실제 일상과 행동의 반경은 여전히 경계 안에 머묾."
         },
         future: {
           fact: cards && cards[2] ? `${cards[2].nameKo}: 거대한 빛 아래 인물과 외부 지형이 드러남.` : "거대한 빛 아래 인물과 외부 지형이 드러남.",
@@ -42,9 +42,14 @@ module.exports = async (req, res) => {
         }
       },
       visualTransition: "황금 문양 옷으로 자신을 감싼 몸 → 드러났지만 타원형 경계 안에 머무는 몸 → 커다란 빛 아래 외부와 접촉하는 장면으로 이동합니다.",
-      focusCardReading: `선택하신 포커스 카드에서 인물은 숨지 않지만 여전히 하나의 테두리 안에 머물러 있습니다. 당신도 마음으로는 새로운 계기나 관계를 받아들일 수 있지만, 실제 일정과 행동 반경은 여전히 익숙한 고유 범위 안에 머물러 있을 가능성이 큽니다. 이상형이나 다음 단계의 조건을 계속 다듬기보다, 닫힌 궤도를 깨고 밖으로 한 걸음 나아가는 결단이 필요한 지점입니다.`,
-      questionResponse: `질문("${userQuestion || '오늘의 질문'}")에 대해 판단을 가로막는 것은 준비 부족이 아닙니다. 이미 당신 내부에는 감정적 준비와 자기 기준이 갖춰져 있습니다. 다만 현재의 생활 패턴이 외부와 접촉할 여백을 만들지 않고 있을 뿐입니다.`,
-      actionAdvice: `이번 주 안에 사람을 만나거나 새로운 장소로 나가는 구체적 약속 하나(누구와, 언제, 어디서 중 1가지)를 오늘 바로 확정하세요.`
+      focusCardReading: `선택하신 포커스 카드에서 인물은 숨지 않지만 여전히 하나의 테두리 안에 머물러 있습니다. 당신도 마음에 두고 계신 질문("${userQuestion || '오늘의 질문'}")에 대해 판단의 기준은 이미 서 있으나, 실제 일정과 행동 반경은 익숙한 범위 안에 머물러 있을 가능성이 큽니다. 다듬기보다 한 걸음 나아가는 결단이 필요한 지점입니다.`,
+      questionResponse: `질문("${userQuestion || '오늘의 질문'}")에 대해 판단을 가로막는 것은 준비 부족이 아닙니다. 이미 당신 내부에는 준비와 기준이 갖춰져 있습니다. 다만 현재의 생활 방식이 외부와 접촉할 여백을 만들지 않고 있을 뿐입니다.`,
+      actionAdvice: `이번 주 안에 내가 미뤄둔 실천 하나(언제, 어디서, 무엇을 중 1가지)를 오늘 바로 확정하세요.`,
+      promiseOptions: [
+        "내가 미뤄둔 구체적 행동 하나를 오늘 바로 시작한다",
+        "확인되지 않은 두려움과 객관적 사실을 명확히 구분한다",
+        "필요했던 의사소통이나 약속을 미루지 않고 진행한다"
+      ]
     };
 
     if (!apiKey || apiKey.includes('YOUR_OPENROUTER_API_KEY')) {
@@ -66,8 +71,8 @@ module.exports = async (req, res) => {
    - 사용자가 직접 선택한 포커스 카드에 전체 해석 분량의 35% 이상을 할당하라. 선택한 카드의 구도적 긴장과 인물의 형태가 질문자의 현재 상태와 어떻게 닮았는지 상세히 분석하라.
 5. 질문 응답(questionResponse):
    - 사용자의 질문에 직접 답하는 3~5문장으로 작성하라. 어느 질문에도 붙일 수 있는 범용 조언을 금지한다.
-6. 행동 조언(actionAdvice):
-   - 그림에서 발견한 시각적 변화와 직접 연결된, 24시간 안에 실행 가능한 구체적 행동(누구와, 언제, 어디서 중 1가지 확정)을 제시하라. '걱정을 적어보라', '마음을 열어라' 같은 상투적 조언 금지.
+6. 행동 조언(actionAdvice) & 동적 약속 문장(promiseOptions):
+   - 질문자의 질문 주제(사업, 금전, 관계, 창작, 진로 등)에 맞춘 24시간 이내 구체적 실행 행동 1가지와, 질문자가 선택할 수 있는 3개의 실천적 약속 문장(promiseOptions)을 배열 형태로 제시하라.
 
 Output MUST be valid JSON matching this exact structure:
 {
@@ -89,7 +94,12 @@ Output MUST be valid JSON matching this exact structure:
   "visualTransition": "세 그림의 실제 시각적 변화 흐름 (1-2문장)",
   "focusCardReading": "선택된 포커스 카드의 시각적 구도 및 깊은 해석 (전체 해석의 35% 이상 분량, 4-6문장)",
   "questionResponse": "사용자의 질문에 직접 응답하는 단호한 판단 (3-5문장)",
-  "actionAdvice": "그림의 시각 변화와 직결된 24시간 이내 구체적 실행 행동 1가지 (1-2문장)"
+  "actionAdvice": "그림의 시각 변화와 직결된 24시간 이내 구체적 실행 행동 1가지 (1-2문장)",
+  "promiseOptions": [
+    "질문자의 질문에 맞춘 현실적 약속 문장 1",
+    "질문자의 질문에 맞춘 현실적 약속 문장 2",
+    "질문자의 질문에 맞춘 현실적 약속 문장 3"
+  ]
 }`;
 
     const userPrompt = `시간 좌표(생년월일): "${birthDate || '미입력'}", 마음속 질문: "${userQuestion || '오늘의 질문'}", 터치하여 시선이 머문 카드 인덱스: ${focusCardIndex} (${focusCardIndex === 0 ? '과거' : focusCardIndex === 1 ? '현재' : '미래'} 카드), 세 카드 시각 데이터: ${JSON.stringify(cards || [])}`;
@@ -148,7 +158,8 @@ Output MUST be valid JSON matching this exact structure:
       focusCardReading: cleanedContent.focusCardReading,
       questionResponse: cleanedContent.questionResponse,
       action: cleanedContent.action || cleanedContent.actionAdvice,
-      actionAdvice: cleanedContent.actionAdvice || cleanedContent.action
+      actionAdvice: cleanedContent.actionAdvice || cleanedContent.action,
+      promiseOptions: cleanedContent.promiseOptions || fallbackResponse.promiseOptions
     });
   } catch (err) {
     console.error("Server error:", err);

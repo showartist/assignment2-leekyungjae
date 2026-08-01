@@ -574,18 +574,16 @@ btnStep1Next?.addEventListener('click', () => {
   }, 800);
 });
 
-// Step 2: 1.2s Real Hold Interaction (Points 8, 9, 10)
-let step2HoldTimer = null;
-let step2HoldStartTime = 0;
-let step2HoldProgressAnim = null;
-let isStep2Completed = false;
-
-function startStep2Hold(e) {
-  if (e.type === 'touchstart') e.preventDefault();
+// Step 2: Question Handler (Point 1 & 2: Regular Next Button, No Hold)
+btnStep2Next?.addEventListener('click', () => {
   if (!isBirthValidated) {
     showToast("🔮 먼저 생년월일을 검증해주세요.");
+    ritualStep1?.classList.remove('hidden');
+    ritualStep2?.classList.add('hidden');
+    birthYear?.focus();
     return;
   }
+
   const q = userQuestion?.value.trim() || '';
   if (!q || q.length < 2) {
     isQuestionValidated = false;
@@ -593,57 +591,13 @@ function startStep2Hold(e) {
     userQuestion?.focus();
     return;
   }
-  if (isStep2Completed) return;
 
-  step2HoldStartTime = Date.now();
-  btnStep2Hold?.classList.add('holding');
-  if (step2HoldText) step2HoldText.textContent = "질문을 맡기는 중 (1.2초)...";
-
-  step2HoldProgressAnim = setInterval(() => {
-    const elapsed = Date.now() - step2HoldStartTime;
-    const pct = Math.min(100, (elapsed / 1200) * 100);
-    if (step2HoldProgress) step2HoldProgress.style.width = pct + '%';
-  }, 30);
-
-  step2HoldTimer = setTimeout(() => {
-    clearInterval(step2HoldProgressAnim);
-    isQuestionValidated = true;
-    isStep2Completed = true;
-    playPaperSound();
-
-    if (step2HoldProgress) step2HoldProgress.style.width = '100%';
-    if (step2HoldText) step2HoldText.textContent = "✨ 질문이 접수되었습니다";
-    btnStep2Hold.disabled = true;
-
-    setTimeout(() => {
-      ritualStep2.classList.add('hidden');
-      ritualStep3.classList.remove('hidden');
-      if (chapterIndicator) chapterIndicator.textContent = 'III. 그림과 마주하기';
-    }, 600);
-  }, 1200);
-}
-
-function cancelStep2Hold() {
-  if (isStep2Completed) return;
-  if (step2HoldTimer) {
-    clearTimeout(step2HoldTimer);
-    step2HoldTimer = null;
-  }
-  if (step2HoldProgressAnim) {
-    clearInterval(step2HoldProgressAnim);
-    step2HoldProgressAnim = null;
-  }
-  btnStep2Hold?.classList.remove('holding');
-  if (step2HoldProgress) step2HoldProgress.style.width = '0%';
-  if (step2HoldText) step2HoldText.textContent = "잠시 눌러 질문을 맡깁니다 (1.2초)";
-}
-
-btnStep2Hold?.addEventListener('mousedown', startStep2Hold);
-btnStep2Hold?.addEventListener('touchstart', startStep2Hold);
-btnStep2Hold?.addEventListener('mouseup', cancelStep2Hold);
-btnStep2Hold?.addEventListener('mouseleave', cancelStep2Hold);
-btnStep2Hold?.addEventListener('touchend', cancelStep2Hold);
-btnStep2Hold?.addEventListener('touchcancel', cancelStep2Hold);
+  isQuestionValidated = true;
+  playPaperSound();
+  ritualStep2.classList.add('hidden');
+  ritualStep3.classList.remove('hidden');
+  if (chapterIndicator) chapterIndicator.textContent = 'III. 그림과 마주하기';
+});
 
 // Step 3: Seal Question Real 1.2-Second Hold Handler (Points 9, 10, 11)
 let sealHoldTimer = null;

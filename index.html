@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260802_0103">
+  <link rel="stylesheet" href="style.css?v=20260802_0104">
 
   <!-- Supabase JS Client SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -83,15 +83,12 @@
           <div class="question-input-wrapper">
             <input type="text" id="userQuestion" placeholder="예: 지금 내가 놓치고 있는 것은 무엇일까?" maxlength="60" autocomplete="off">
           </div>
-          <div class="seal-button-wrapper">
-            <button class="btn-seal-hold" id="btnStep2Hold">
-              <div class="hold-progress-bar" id="step2HoldProgress"></div>
-              <span class="seal-text" id="step2HoldText">잠시 눌러 질문을 맡깁니다 (1.2초)</span>
-            </button>
-          </div>
+          <button class="btn-ritual" id="btnStep2Next">
+            <span>이 질문을 카드에 맡깁니다</span>
+          </button>
         </div>
 
-        <!-- Step 3: Seal Question (Press and Hold 1.2s) -->
+        <!-- Step 3: Seal Question (Single 1.2s Press and Hold) -->
         <div class="ritual-step hidden" id="ritualStep3">
           <h2 class="step-title">질문을 카드에 봉인하는 시간</h2>
           <p class="step-guide">
@@ -181,10 +178,10 @@
                     </div>
                   </div>
                 </div>
-                <!-- Card Observation Caption (2 Sentences Right Under Card Image) -->
-                <div class="card-caption-block" id="pastCardCaption">
-                  <p class="caption-fact" id="pastFactText">황금 문양으로 몸을 감싼 정적인 자세.</p>
-                  <p class="caption-meaning" id="pastMeaningText">자기 기준과 생활의 틀이 단단해진 시간.</p>
+                <!-- Card Observation Caption (Dynamically Rendered) -->
+                <div class="card-caption-block hidden" id="pastCardCaption">
+                  <p class="caption-fact" id="pastFactText"></p>
+                  <p class="caption-meaning" id="pastMeaningText"></p>
                 </div>
               </div>
 
@@ -205,10 +202,10 @@
                     </div>
                   </div>
                 </div>
-                <!-- Card Observation Caption (2 Sentences Right Under Card Image) -->
-                <div class="card-caption-block" id="presentCardCaption">
-                  <p class="caption-fact" id="presentFactText">몸은 드러났지만 타원형 경계 안에 머묾.</p>
-                  <p class="caption-meaning" id="presentMeaningText">마음은 열렸지만 생활의 반경은 아직 닫혀 있음.</p>
+                <!-- Card Observation Caption (Dynamically Rendered) -->
+                <div class="card-caption-block hidden" id="presentCardCaption">
+                  <p class="caption-fact" id="presentFactText"></p>
+                  <p class="caption-meaning" id="presentMeaningText"></p>
                 </div>
               </div>
 
@@ -229,10 +226,10 @@
                     </div>
                   </div>
                 </div>
-                <!-- Card Observation Caption (2 Sentences Right Under Card Image) -->
-                <div class="card-caption-block" id="futureCardCaption">
-                  <p class="caption-fact" id="futureFactText">거대한 태양과 외부를 향한 장면.</p>
-                  <p class="caption-meaning" id="futureMeaningText">내부의 준비가 실제 만남으로 이동할 가능성.</p>
+                <!-- Card Observation Caption (Dynamically Rendered) -->
+                <div class="card-caption-block hidden" id="futureCardCaption">
+                  <p class="caption-fact" id="futureFactText"></p>
+                  <p class="caption-meaning" id="futureMeaningText"></p>
                 </div>
               </div>
             </div>
@@ -267,43 +264,33 @@
           
           <!-- 1. Headline Statement -->
           <div class="editorial-header">
-            <span class="editorial-badge">클림트 황금기에서 영감받은 타로 아트</span>
-            <h2 class="reading-headline" id="connectionInsightHeadline">
-              당신은 관계를 받아들일 준비가 되어 있습니다. 다만 지금 필요한 것은 더 많은 준비가 아니라, 닫힌 경계 밖으로 한 번 움직이는 일입니다.
-            </h2>
+            <span class="editorial-badge">클림트 황금 양식에서 영감을 받은 타로</span>
+            <h2 class="reading-headline" id="connectionInsightHeadline"></h2>
           </div>
 
           <!-- 2. Visual Movement / Transition Flow -->
           <div class="visual-transition-banner">
             <span class="section-sublabel">세 그림의 시각적 변화</span>
-            <p class="transition-text" id="layerVisualFlow">
-              황금 문양 옷으로 자신을 감싼 몸 → 드러났지만 타원형 경계 안에 머무는 몸 → 커다란 빛 아래 외부와 접촉하는 장면으로 이동합니다.
-            </p>
+            <p class="transition-text" id="layerVisualFlow"></p>
           </div>
 
           <!-- 3. Focus Card Deep Reading Block (No Duplicate Image) -->
           <div class="focus-reading-block" id="focusReadingBlock">
             <span class="section-sublabel">당신의 시선이 머문 그림 집중 해석</span>
             <h3 class="focus-card-title" id="focusShowcaseTitle">II. PRESENT — 황금빛 꽃</h3>
-            <p class="focus-card-reading-text" id="layerFocusCardReason">
-              이 인물은 숨지 않지만 여전히 하나의 테두리 안에 머물러 있습니다. 당신도 마음으로는 관계나 새로운 기회를 받아들일 수 있지만, 실제 일정과 인간관계의 반경은 여전히 익숙한 범위 안에 머물러 있을 수 있습니다.
-            </p>
+            <p class="focus-card-reading-text" id="layerFocusCardReason"></p>
           </div>
 
           <!-- 4. Direct Response to User Question -->
           <div class="question-response-block">
             <span class="section-sublabel">질문에 대한 직접 응답</span>
-            <p class="question-response-text" id="layerQuestionResponse">
-              당신에게 부족한 것은 준비가 아닙니다. 이미 자기 기준과 감정적인 준비는 갖춰져 있습니다. 다만 현재의 생활 방식이 외부가 들어올 틈을 거의 만들지 않고 있을 가능성이 큽니다.
-            </p>
+            <p class="question-response-text" id="layerQuestionResponse"></p>
           </div>
 
           <!-- 5. Actionable Advice (Single Bold Action) -->
           <div class="action-advice-card">
             <span class="action-label">오늘의 행동</span>
-            <p class="action-content" id="layerActionAdvice">
-              이상형의 조건을 더 정리하지 마세요. 대신 이번 주 안에 사람을 만날 수 있는 약속 하나를 구체적으로 확정하세요.
-            </p>
+            <p class="action-content" id="layerActionAdvice"></p>
           </div>
 
           <!-- Particulars Table Grid -->
@@ -333,91 +320,75 @@
           </div>
         </section>
 
-        <!-- Final 30-Second Commitment & Gratitude Ritual Section -->
+        <!-- Streamlined Final Commitment & Gratitude Ritual Section (Points 7, 10, 11) -->
         <section class="final-ritual-container hidden" id="finalRitualContainer">
           <div class="ritual-divider-gold"></div>
 
-          <!-- Phase 1: Silence & Headline Pause -->
-          <div class="ritual-phase active" id="phasePause">
-            <p class="pause-focus-text" id="pauseHeadlineCopy">
-              "당신에게 필요한 것은 더 많은 준비가 아니라, 닫힌 생활의 경계 밖으로 한 번 움직이는 일입니다."
-            </p>
-            <p class="pause-subhint">이 문장 앞에 잠시 머물러주세요.</p>
-            <button class="btn-phase-next" id="btnGoToSelectPromise">
-              <span>내 삶으로 가져갈 문장 고르기</span>
+          <!-- Step A: Select Promise Sentence (Dynamically Rendered by AI) -->
+          <div class="ritual-phase active" id="phaseSelectPromise">
+            <h3 class="phase-title">오늘, 어떤 행동을 현실로 가져가시겠습니까?</h3>
+            <p class="phase-sub">직접 선택하는 순간, 이 문장은 당신의 약속이 됩니다.</p>
+            <div class="promise-options" id="promiseOptions">
+              <!-- Dynamically rendered by renderPromiseOptions(promises) -->
+            </div>
+            <button class="btn-phase-next hidden" id="btnGoToSealPromise">
+              <span>이 약속을 봉인하러 가기</span>
             </button>
           </div>
 
-          <!-- Phase 2: Select Promise Sentence -->
-          <div class="ritual-phase hidden" id="phaseSelectPromise">
-            <h3 class="phase-title">오늘, 어떤 문장을 현실로 가져가시겠습니까?</h3>
-            <p class="phase-sub">직접 고르는 순간, 이 문장은 당신의 약속이 됩니다.</p>
-            <div class="promise-options" id="promiseOptions">
-              <button class="btn-promise-option active-opt" data-promise="사람을 만날 약속 하나를 정한다">
-                <span>사람을 만날 약속 하나를 정한다</span>
-              </button>
-              <button class="btn-promise-option" data-promise="내가 확인한 사실과 두려움을 구분한다">
-                <span>내가 확인한 사실과 두려움을 구분한다</span>
-              </button>
-              <button class="btn-promise-option" data-promise="미뤄온 대화를 먼저 시작한다">
-                <span>미뤄온 대화를 먼저 시작한다</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Phase 3: Seal Promise (1.2s Hold) -->
+          <!-- Step B: Seal Promise (1.2s Hold) -->
           <div class="ritual-phase hidden" id="phaseSealPromise">
             <div class="gold-plaque" id="goldPlaque">
               <span class="plaque-label">TODAY'S PROMISE</span>
-              <p class="plaque-text" id="selectedPromiseText">사람을 만날 약속 하나를 정한다</p>
+              <p class="plaque-text" id="selectedPromiseText"></p>
               <div class="plaque-border-line" id="plaqueBorderLine"></div>
             </div>
             <p class="phase-guide">이것을 오늘의 약속으로 남기시겠습니까?</p>
             <div class="seal-button-wrapper">
               <button class="btn-seal-promise" id="btnSealPromise">
-                <span class="seal-promise-text">잠시 눌러 약속을 봉인합니다</span>
+                <span class="seal-promise-text">잠시 눌러 약속을 봉인합니다 (1.2초)</span>
               </button>
             </div>
             <p class="promise-sealed-msg hidden" id="promiseSealedMsg">✨ 당신의 선택이 기록되었습니다.</p>
           </div>
 
-          <!-- Phase 4: Gratitude Offering (복채) -->
-          <div class="ritual-phase hidden" id="phaseOffering">
-            <div class="offering-header">
-              <h3 class="offering-title">이 리딩을 현실로 가져가고 싶은 만큼,<br>복채를 정해주세요.</h3>
-              <p class="offering-sub">복채는 운명을 사는 값이 아닙니다.<br>오늘 발견한 문장과 이 경험에 남기는 마음입니다.</p>
-            </div>
-
-            <div class="offering-tiers">
-              <button class="offering-card" data-amount="1000">
-                <span class="tier-name">작은 감사</span>
-                <span class="tier-price">1,000원</span>
-              </button>
-              <button class="offering-card featured" data-amount="3000">
-                <span class="tier-name">오래 남은 문장</span>
-                <span class="tier-price">3,000원</span>
-              </button>
-              <button class="offering-card" data-amount="5000">
-                <span class="tier-name">깊이 머문 리딩</span>
-                <span class="tier-price">5,000원</span>
-              </button>
-            </div>
-
-            <div class="offering-actions">
-              <button class="btn-custom-offering" id="btnCustomOffering">직접 정하기</button>
-              <button class="btn-free-finish" id="btnFreeFinish">오늘은 마음만 남기고 마칩니다</button>
-            </div>
-          </div>
-
-          <!-- Phase 5: Ritual Close & Final Card -->
+          <!-- Final Commitment Card -->
           <div class="ritual-phase hidden" id="phaseFinalCard">
             <div class="final-card-box">
               <span class="final-badge">MY COMMITMENT</span>
               <h2 class="final-title">오늘의 약속</h2>
-              <p class="final-promise-display" id="finalPromiseDisplay">이번 주 안에 사람을 만나는 약속 하나를 정한다.</p>
+              <p class="final-promise-display" id="finalPromiseDisplay"></p>
               <p class="final-close-note" id="finalCloseNote">운세는 여기에서 끝나지만, 당신이 선택한 행동은 지금부터 시작됩니다.</p>
               <div class="final-action-group">
                 <button class="btn-save-promise" id="btnSavePromise">나의 약속 저장하기</button>
+              </div>
+            </div>
+
+            <!-- Voluntary Gratitude Offering (Show AFTER final card is complete) -->
+            <div class="offering-section" id="offeringSection">
+              <div class="offering-header">
+                <h3 class="offering-title">이 리딩에 감사한 마음을 남기고 싶다면</h3>
+                <p class="offering-sub">복채는 선택 사항입니다. 오늘 발견한 문장과 이 경험에 남기는 마음입니다.</p>
+              </div>
+
+              <div class="offering-tiers">
+                <button class="offering-card" data-amount="1000">
+                  <span class="tier-name">작은 감사</span>
+                  <span class="tier-price">1,000원</span>
+                </button>
+                <button class="offering-card featured" data-amount="3000">
+                  <span class="tier-name">오래 남은 문장</span>
+                  <span class="tier-price">3,000원</span>
+                </button>
+                <button class="offering-card" data-amount="5000">
+                  <span class="tier-name">깊이 머문 리딩</span>
+                  <span class="tier-price">5,000원</span>
+                </button>
+              </div>
+
+              <div class="offering-actions">
+                <button class="btn-custom-offering" id="btnCustomOffering">직접 정하기</button>
+                <button class="btn-free-finish" id="btnFreeFinish">오늘은 마음만 남기고 마칩니다</button>
               </div>
             </div>
           </div>
@@ -486,6 +457,6 @@
   <!-- Minimal Toast -->
   <div class="toast hidden" id="toast">클립보드에 복사되었습니다</div>
 
-  <script src="script.js?v=20260802_0103"></script>
+  <script src="script.js?v=20260802_0104"></script>
 </body>
 </html>
