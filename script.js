@@ -515,50 +515,29 @@ function validateRitualPipeline() {
   });
 });
 
-// Step 1: Birth Date Validation (Smart Year/Month/Day & Flexible 2-digit Year)
+// Step 1: Birth Date Handler (Guaranteed 100% Smooth Step Transition)
 btnStep1Next?.addEventListener('click', () => {
   let y = birthYear?.value.trim() || '';
   let m = birthMonth?.value.trim() || '';
   let d = birthDay?.value.trim() || '';
 
-  // 2자리 연도 입력 시 4자리로 자동 보정 (예: 95 -> 1995, 05 -> 2005)
-  if (/^\d{2}$/.test(y)) {
-    const yNum = parseInt(y, 10);
-    y = yNum > 26 ? `19${y}` : `20${y}`;
+  // 생년월일 전체가 비어있는 경우 기본 연도(1995)로 자동 설정
+  if (!y && !m && !d) {
+    y = '1995'; m = '01'; d = '01';
     if (birthYear) birthYear.value = y;
-  }
-
-  const yearNum = parseInt(y, 10);
-  const monthNum = parseInt(m, 10);
-  const dayNum = parseInt(d, 10);
-
-  const isYearValid = /^\d{4}$/.test(y) && yearNum >= 1900 && yearNum <= 2026;
-  const isMonthValid = /^(0?[1-9]|1[0-2])$/.test(m) && monthNum >= 1 && monthNum <= 12;
-  const isDayValid = /^(0?[1-9]|[12]\d|3[01])$/.test(d) && dayNum >= 1 && dayNum <= 31;
-
-  if (!isYearValid || !isMonthValid || !isDayValid) {
-    [birthYear, birthMonth, birthDay].forEach(el => {
-      if (el) el.classList.add('input-error');
-    });
-    setTimeout(() => {
-      [birthYear, birthMonth, birthDay].forEach(el => el?.classList.remove('input-error'));
-    }, 500);
-
-    if (!y) {
-      showToast("🔮 출생 연도(예: 1995)를 입력해주세요.");
-      birthYear?.focus();
-    } else if (!m) {
-      showToast("🔮 태어난 월(예: 08)을 입력해주세요.");
-      birthMonth?.focus();
-    } else if (!d) {
-      showToast("🔮 태어난 일(예: 20)을 입력해주세요.");
-      birthDay?.focus();
-    } else {
-      showToast("🔮 올바른 생년월일(예: 1995 / 08 / 20)을 적어주세요.");
-      birthYear?.focus();
+    if (birthMonth) birthMonth.value = m;
+    if (birthDay) birthDay.value = d;
+    showToast("🔮 나의 기본 시간 좌표(1995/01/01)가 연결되었습니다.");
+  } else {
+    // 2자리 연도 입력 시 4자리로 자동 보정 (예: 95 -> 1995, 05 -> 2005)
+    if (/^\d{2}$/.test(y)) {
+      const yNum = parseInt(y, 10);
+      y = yNum > 26 ? `19${y}` : `20${y}`;
+      if (birthYear) birthYear.value = y;
     }
-    isBirthValidated = false;
-    return;
+    // 월/일이 누락된 경우 01월 01일로 자동 채움
+    if (!m) { m = '01'; if (birthMonth) birthMonth.value = '01'; }
+    if (!d) { d = '01'; if (birthDay) birthDay.value = '01'; }
   }
 
   isBirthValidated = true;
@@ -567,22 +546,18 @@ btnStep1Next?.addEventListener('click', () => {
   userQuestion?.focus();
 });
 
-// Step 2: Question Validation
+// Step 2: Question Handler (Guaranteed Smooth Step Transition)
 btnStep2Next?.addEventListener('click', () => {
   if (!isBirthValidated) {
-    validateRitualPipeline();
-    return;
+    isBirthValidated = true;
   }
 
-  const q = userQuestion?.value.trim() || '';
+  let q = userQuestion?.value.trim() || '';
+  // 질문이 공백인 경우 기본 추천 질문으로 자동 완성 후 통과
   if (!q || q.length < 2) {
-    userQuestion?.classList.add('input-error');
-    setTimeout(() => userQuestion?.classList.remove('input-error'), 500);
-
-    showToast("🔮 마주하고 싶은 질문을 최소 한 문장(2자 이상) 적어주세요.");
-    isQuestionValidated = false;
-    userQuestion?.focus();
-    return;
+    q = "지금 내가 놓치고 있는 것은 무엇일까?";
+    if (userQuestion) userQuestion.value = q;
+    showToast("🔮 마음의 기본 질문이 카드에 연결되었습니다.");
   }
 
   isQuestionValidated = true;
