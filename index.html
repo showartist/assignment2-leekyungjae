@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260802_0101">
+  <link rel="stylesheet" href="style.css?v=20260802_0102">
 
   <!-- Supabase JS Client SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -47,6 +47,9 @@
     <main class="exhibition-scene">
       <!-- Step-by-Step Digital Ritual Container (Strict Entrance) -->
       <section class="digital-ritual-container" id="digitalRitualContainer">
+        <!-- Exhibition Chapter Indicator (Points 13, 14) -->
+        <div class="chapter-indicator" id="chapterIndicator">I. 나의 시간</div>
+
         <!-- Step 1: Birth Date (Mandatory Time Entrance) -->
         <div class="ritual-step active" id="ritualStep1">
           <h1 class="hero-question">
@@ -63,10 +66,11 @@
             <span class="slash">/</span>
             <input type="text" id="birthDay" placeholder="20" maxlength="2" autocomplete="off" inputmode="numeric">
           </div>
-          <p class="privacy-notice">* 입력한 생년월일과 질문은 이번 해석에만 참조되며 서버에 저장되지 않습니다.</p>
+          <p class="privacy-notice">* 입력한 생년월일과 질문은 이번 도록 해설 조율에만 수신 및 참조됩니다.</p>
           <button class="btn-ritual" id="btnStep1Next">
             <span>나의 시간을 건넵니다</span>
           </button>
+          <p class="step-feedback-msg hidden" id="step1FeedbackMsg">✨ 당신의 시간이 열렸습니다</p>
         </div>
 
         <!-- Step 2: Question (My Inquiry) -->
@@ -79,9 +83,12 @@
           <div class="question-input-wrapper">
             <input type="text" id="userQuestion" placeholder="예: 지금 내가 놓치고 있는 것은 무엇일까?" maxlength="60" autocomplete="off">
           </div>
-          <button class="btn-ritual" id="btnStep2Next">
-            <span>이 질문을 카드에 맡깁니다</span>
-          </button>
+          <div class="seal-button-wrapper">
+            <button class="btn-seal-hold" id="btnStep2Hold">
+              <div class="hold-progress-bar" id="step2HoldProgress"></div>
+              <span class="seal-text" id="step2HoldText">잠시 눌러 질문을 맡깁니다 (1.2초)</span>
+            </button>
+          </div>
         </div>
 
         <!-- Step 3: Seal Question (Press and Hold 1.2s) -->
@@ -91,8 +98,9 @@
             아래 봉인 버튼을 잠시 길게 누르고 계세요.
           </p>
           <div class="seal-button-wrapper">
-            <button class="btn-seal" id="btnSealQuestion">
-              <span class="seal-text">질문을 봉인하려면 잠시 누르세요</span>
+            <button class="btn-seal-hold" id="btnSealQuestion">
+              <div class="hold-progress-bar" id="step3HoldProgress"></div>
+              <span class="seal-text" id="step3HoldText">잠시 눌러 질문을 봉인합니다 (1.2초)</span>
             </button>
           </div>
           <p class="seal-complete-msg hidden" id="sealCompleteMsg">✨ 당신의 질문이 카드에 머물렀습니다.</p>
@@ -478,6 +486,6 @@
   <!-- Minimal Toast -->
   <div class="toast hidden" id="toast">클립보드에 복사되었습니다</div>
 
-  <script src="script.js?v=20260802_0101"></script>
+  <script src="script.js?v=20260802_0102"></script>
 </body>
 </html>

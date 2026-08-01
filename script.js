@@ -534,7 +534,22 @@ function isValidBirthDateParts(y, m, d) {
     candidate.getDate() === day;
 }
 
-// Step 1: Birth Date Handler (Strict Validation — no auto-fill bypass)
+const chapterIndicator = document.getElementById('chapterIndicator');
+const step1FeedbackMsg = document.getElementById('step1FeedbackMsg');
+const btnStep2Hold = document.getElementById('btnStep2Hold');
+const step2HoldProgress = document.getElementById('step2HoldProgress');
+const step2HoldText = document.getElementById('step2HoldText');
+
+const step3HoldProgress = document.getElementById('step3HoldProgress');
+const step3HoldText = document.getElementById('step3HoldText');
+
+// Birth Input Active Highlight Accent
+[birthYear, birthMonth, birthDay].forEach(input => {
+  input?.addEventListener('focus', () => input.classList.add('active-input'));
+  input?.addEventListener('blur', () => input.classList.remove('active-input'));
+});
+
+// Step 1: Birth Date Handler (Points 5, 6, 7)
 btnStep1Next?.addEventListener('click', () => {
   const y = birthYear?.value.trim() || '';
   const m = birthMonth?.value.trim() || '';
@@ -548,22 +563,29 @@ btnStep1Next?.addEventListener('click', () => {
   }
 
   isBirthValidated = true;
-  ritualStep1.classList.add('hidden');
-  ritualStep2.classList.remove('hidden');
-  userQuestion?.focus();
+  [birthYear, birthMonth, birthDay].forEach(inp => inp?.classList.add('glow-gold'));
+  if (step1FeedbackMsg) step1FeedbackMsg.classList.remove('hidden');
+
+  setTimeout(() => {
+    ritualStep1.classList.add('hidden');
+    ritualStep2.classList.remove('hidden');
+    if (chapterIndicator) chapterIndicator.textContent = 'II. 나의 질문';
+    userQuestion?.focus();
+  }, 800);
 });
 
-// Step 2: Question Handler (Strict Validation — no default question bypass)
-btnStep2Next?.addEventListener('click', () => {
+// Step 2: 1.2s Real Hold Interaction (Points 8, 9, 10)
+let step2HoldTimer = null;
+let step2HoldStartTime = 0;
+let step2HoldProgressAnim = null;
+let isStep2Completed = false;
+
+function startStep2Hold(e) {
+  if (e.type === 'touchstart') e.preventDefault();
   if (!isBirthValidated) {
     showToast("🔮 먼저 생년월일을 검증해주세요.");
-    ritualStep1?.classList.remove('hidden');
-    ritualStep2?.classList.add('hidden');
-    ritualStep3?.classList.add('hidden');
-    birthYear?.focus();
     return;
   }
-
   const q = userQuestion?.value.trim() || '';
   if (!q || q.length < 2) {
     isQuestionValidated = false;
@@ -571,32 +593,62 @@ btnStep2Next?.addEventListener('click', () => {
     userQuestion?.focus();
     return;
   }
+  if (isStep2Completed) return;
 
-  isQuestionValidated = true;
-  ritualStep2.classList.add('hidden');
-  ritualStep3.classList.remove('hidden');
-});
+  step2HoldStartTime = Date.now();
+  btnStep2Hold?.classList.add('holding');
+  if (step2HoldText) step2HoldText.textContent = "질문을 맡기는 중 (1.2초)...";
 
-// Enter Key Listeners for smooth Keyboard Navigation
-[birthYear, birthMonth, birthDay].forEach(input => {
-  input?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      btnStep1Next?.click();
-    }
-  });
-});
+  step2HoldProgressAnim = setInterval(() => {
+    const elapsed = Date.now() - step2HoldStartTime;
+    const pct = Math.min(100, (elapsed / 1200) * 100);
+    if (step2HoldProgress) step2HoldProgress.style.width = pct + '%';
+  }, 30);
 
-userQuestion?.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    btnStep2Next?.click();
+  step2HoldTimer = setTimeout(() => {
+    clearInterval(step2HoldProgressAnim);
+    isQuestionValidated = true;
+    isStep2Completed = true;
+    playPaperSound();
+
+    if (step2HoldProgress) step2HoldProgress.style.width = '100%';
+    if (step2HoldText) step2HoldText.textContent = "✨ 질문이 접수되었습니다";
+    btnStep2Hold.disabled = true;
+
+    setTimeout(() => {
+      ritualStep2.classList.add('hidden');
+      ritualStep3.classList.remove('hidden');
+      if (chapterIndicator) chapterIndicator.textContent = 'III. 그림과 마주하기';
+    }, 600);
+  }, 1200);
+}
+
+function cancelStep2Hold() {
+  if (isStep2Completed) return;
+  if (step2HoldTimer) {
+    clearTimeout(step2HoldTimer);
+    step2HoldTimer = null;
   }
-});
+  if (step2HoldProgressAnim) {
+    clearInterval(step2HoldProgressAnim);
+    step2HoldProgressAnim = null;
+  }
+  btnStep2Hold?.classList.remove('holding');
+  if (step2HoldProgress) step2HoldProgress.style.width = '0%';
+  if (step2HoldText) step2HoldText.textContent = "잠시 눌러 질문을 맡깁니다 (1.2초)";
+}
 
-// Step 3: Seal Question Real 1.2-Second Hold Handler (mousedown/touchstart -> mouseup/touchend)
+btnStep2Hold?.addEventListener('mousedown', startStep2Hold);
+btnStep2Hold?.addEventListener('touchstart', startStep2Hold);
+btnStep2Hold?.addEventListener('mouseup', cancelStep2Hold);
+btnStep2Hold?.addEventListener('mouseleave', cancelStep2Hold);
+btnStep2Hold?.addEventListener('touchend', cancelStep2Hold);
+btnStep2Hold?.addEventListener('touchcancel', cancelStep2Hold);
+
+// Step 3: Seal Question Real 1.2-Second Hold Handler (Points 9, 10, 11)
 let sealHoldTimer = null;
 let sealHoldStartTime = 0;
+let sealHoldProgressAnim = null;
 const HOLD_DURATION_MS = 1200;
 
 function startSealHold(e) {
@@ -608,19 +660,41 @@ function startSealHold(e) {
   if (isSealed) return;
 
   sealHoldStartTime = Date.now();
-  const sealText = btnSealQuestion?.querySelector('.seal-text');
-  if (sealText) sealText.textContent = "질문을 카드에 봉인하는 중 (1.2초)...";
   btnSealQuestion?.classList.add('holding');
+  if (step3HoldText) step3HoldText.textContent = "질문을 카드에 봉인하는 중 (1.2초)...";
+
+  sealHoldProgressAnim = setInterval(() => {
+    const elapsed = Date.now() - sealHoldStartTime;
+    const pct = Math.min(100, (elapsed / HOLD_DURATION_MS) * 100);
+    if (step3HoldProgress) step3HoldProgress.style.width = pct + '%';
+  }, 30);
 
   sealHoldTimer = setTimeout(() => {
+    clearInterval(sealHoldProgressAnim);
     isSealed = true; // Mark Ritual as officially sealed after 1.2s of holding!
+    playChimeSound();
+
+    if (step3HoldProgress) step3HoldProgress.style.width = '100%';
+    if (step3HoldText) step3HoldText.textContent = "✨ 질문이 카드에 머물렀습니다";
     btnSealQuestion.disabled = true;
     btnSealQuestion.classList.remove('holding');
-    btnSealQuestion.classList.add('hidden');
     sealCompleteMsg?.classList.remove('hidden');
+
+    const sealedSummaryCard = document.getElementById('sealedSummaryCard');
+    const sealedBirthDisplay = document.getElementById('sealedBirthDisplay');
+    const sealedQuestionDisplay = document.getElementById('sealedQuestionDisplay');
+
+    if (sealedBirthDisplay) {
+      sealedBirthDisplay.textContent = `생년월일: ${birthYear?.value.trim() || ''}.${birthMonth?.value.trim() || ''}.${birthDay?.value.trim() || ''}`;
+    }
+    if (sealedQuestionDisplay) {
+      sealedQuestionDisplay.textContent = `"${userQuestion?.value.trim() || ''}"`;
+    }
+    sealedSummaryCard?.classList.remove('hidden');
 
     setTimeout(() => {
       postSealStage?.classList.remove('hidden');
+      if (chapterIndicator) chapterIndicator.textContent = 'III. 그림과 마주하기';
       postSealStage?.scrollIntoView({ behavior: 'smooth' });
     }, 1000);
   }, HOLD_DURATION_MS);
@@ -632,19 +706,17 @@ function cancelSealHold() {
     clearTimeout(sealHoldTimer);
     sealHoldTimer = null;
   }
-  
-  const elapsed = Date.now() - sealHoldStartTime;
-  if (elapsed < HOLD_DURATION_MS) {
-    const sealText = btnSealQuestion?.querySelector('.seal-text');
-    if (sealText) sealText.textContent = "질문을 봉인하려면 잠시 누르세요";
-    btnSealQuestion?.classList.remove('holding');
-    showToast("🔮 1.2초 동안 떼지 말고 끝까지 눌러주셔야 질문이 봉인됩니다.");
+  if (sealHoldProgressAnim) {
+    clearInterval(sealHoldProgressAnim);
+    sealHoldProgressAnim = null;
   }
+  btnSealQuestion?.classList.remove('holding');
+  if (step3HoldProgress) step3HoldProgress.style.width = '0%';
+  if (step3HoldText) step3HoldText.textContent = "잠시 눌러 질문을 봉인합니다 (1.2초)";
 }
 
 btnSealQuestion?.addEventListener('mousedown', startSealHold);
 btnSealQuestion?.addEventListener('touchstart', startSealHold);
-
 btnSealQuestion?.addEventListener('mouseup', cancelSealHold);
 btnSealQuestion?.addEventListener('mouseleave', cancelSealHold);
 btnSealQuestion?.addEventListener('touchend', cancelSealHold);
