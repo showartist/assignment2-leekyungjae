@@ -163,6 +163,11 @@
                     </div>
                   </div>
                 </div>
+                <!-- Card Observation Caption (2 Sentences Right Under Card Image) -->
+                <div class="card-caption-block" id="pastCardCaption">
+                  <p class="caption-fact" id="pastFactText">황금 문양으로 몸을 감싼 정적인 자세.</p>
+                  <p class="caption-meaning" id="pastMeaningText">자기 기준과 생활의 틀이 단단해진 시간.</p>
+                </div>
               </div>
 
               <!-- Present Card -->
@@ -182,6 +187,11 @@
                     </div>
                   </div>
                 </div>
+                <!-- Card Observation Caption (2 Sentences Right Under Card Image) -->
+                <div class="card-caption-block" id="presentCardCaption">
+                  <p class="caption-fact" id="presentFactText">몸은 드러났지만 타원형 경계 안에 머묾.</p>
+                  <p class="caption-meaning" id="presentMeaningText">마음은 열렸지만 생활의 반경은 아직 닫혀 있음.</p>
+                </div>
               </div>
 
               <!-- Future Card -->
@@ -200,6 +210,11 @@
                       <div class="card-vignette-overlay"></div>
                     </div>
                   </div>
+                </div>
+                <!-- Card Observation Caption (2 Sentences Right Under Card Image) -->
+                <div class="card-caption-block" id="futureCardCaption">
+                  <p class="caption-fact" id="futureFactText">거대한 태양과 외부를 향한 장면.</p>
+                  <p class="caption-meaning" id="futureMeaningText">내부의 준비가 실제 만남으로 이동할 가능성.</p>
                 </div>
               </div>
             </div>
@@ -228,67 +243,53 @@
           <span id="aiGenerationStatusText">선택하신 그림의 구도와 관찰된 요소를 읽고 있습니다…</span>
         </div>
 
-        <!-- Six-Part Structured Editorial Reading Result Page -->
+        <!-- Clean & Elegant Art-Centered Reading Result Page -->
         <section class="editorial-result hidden" id="resultDetailsPanel">
           <div class="editorial-divider-line"></div>
+          
+          <!-- 1. Headline Statement -->
           <div class="editorial-header">
-            <span class="editorial-badge">클림트 영감 타로 도록 해설</span>
+            <span class="editorial-badge">클림트 황금기에서 영감받은 타로 아트</span>
             <h2 class="reading-headline" id="connectionInsightHeadline">
-              지금 당신을 흔드는 것은 실제 사건보다, 아직 확인되지 않은 가능성을 머릿속에서 크게 키우는 마음입니다.
+              당신은 관계를 받아들일 준비가 되어 있습니다. 다만 지금 필요한 것은 더 많은 준비가 아니라, 닫힌 경계 밖으로 한 번 움직이는 일입니다.
             </h2>
           </div>
 
-          <!-- Part 1: Visual Fact Observations (과거·현재·미래) -->
-          <div class="reading-layer-box">
-            <span class="layer-title">Ⅰ. 그림 앞에서 (시각적 관찰과 연결)</span>
-            <div class="observation-list" id="layerVisualObservation">
-              <div class="obs-item">
-                <span class="obs-pos">[과거]</span>
-                <span class="obs-fact">인물이 닫힌 문양 안에 머물러 있습니다.</span>
-                <span class="obs-meaning">스스로 정해둔 안전 구역 안에서 상상을 키우던 상태를 가리킵니다.</span>
-              </div>
-              <div class="obs-item">
-                <span class="obs-pos">[현재]</span>
-                <span class="obs-fact">수면의 일부만 달빛에 반사됩니다.</span>
-                <span class="obs-meaning">전체가 아닌 일부분만 보고 판단하려는 상태입니다.</span>
-              </div>
-              <div class="obs-item">
-                <span class="obs-pos">[미래]</span>
-                <span class="obs-fact">정면을 향한 곧은 시선이 수직으로 나타납니다.</span>
-                <span class="obs-meaning">외부의 모호함을 걷어내고 직접 눈으로 확인한 데이터로 수직 축을 세우는 시점입니다.</span>
-              </div>
+          <!-- 2. Visual Movement / Transition Flow -->
+          <div class="visual-transition-banner">
+            <span class="section-sublabel">세 그림의 시각적 변화</span>
+            <p class="transition-text" id="layerVisualFlow">
+              황금 문양 옷으로 자신을 감싼 몸 → 드러났지만 타원형 경계 안에 머무는 몸 → 커다란 빛 아래 외부와 접촉하는 장면으로 이동합니다.
+            </p>
+          </div>
+
+          <!-- 3. Focus Card Spotlight Showcase (Primary Reading Centered Here) -->
+          <div class="focus-card-showcase" id="focusCardShowcase">
+            <span class="section-sublabel">당신의 시선이 머문 그림</span>
+            <div class="showcase-card-frame">
+              <img id="focusShowcaseImg" src="assets/cards/the-lovers.png" alt="선택한 포커스 카드" class="showcase-card-img">
+            </div>
+            <h3 class="focus-card-title" id="focusShowcaseTitle">II. PRESENT — 황금빛 꽃</h3>
+            <div class="focus-card-body">
+              <p class="focus-card-reading-text" id="layerFocusCardReason">
+                이 인물은 숨지 않지만 여전히 하나의 테두리 안에 머물러 있습니다. 당신도 마음으로는 관계나 새로운 기회를 받아들일 수 있지만, 실제 일정과 인간관계의 반경은 여전히 익숙한 범위 안에 머물러 있을 수 있습니다.
+              </p>
             </div>
           </div>
 
-          <!-- Part 2: Visual Transition Movement -->
-          <div class="reading-layer-box">
-            <span class="layer-title">Ⅱ. 세 그림의 움직임 (구도와 변화)</span>
-            <p class="layer-narrative" id="layerVisualFlow">
-              첫 번째 그림의 닫힌 형태가 두 번째 그림에서 수면의 부분 반사로 흐려지다가, 세 번째 그림에서 정면을 향한 수직선으로 다시 또렷해집니다.
+          <!-- 4. Direct Response to User Question -->
+          <div class="question-response-block">
+            <span class="section-sublabel">질문에 대한 직접 응답</span>
+            <p class="question-response-text" id="layerQuestionResponse">
+              당신에게 부족한 것은 준비가 아닙니다. 이미 자기 기준과 감정적인 준비는 갖춰져 있습니다. 다만 현재의 생활 방식이 외부가 들어올 틈을 거의 만들지 않고 있을 가능성이 큽니다.
             </p>
           </div>
 
-          <!-- Part 3: Direct Response to Question -->
-          <div class="reading-layer-box">
-            <span class="layer-title">Ⅲ. 당신의 질문에 대한 응답</span>
-            <p class="layer-narrative" id="layerQuestionResponse">
-              질문에 대해 판단을 흐리는 것은 자원 부족이 아니라 확인되지 않은 두려움입니다. 직감을 무시할 필요도, 직감만 믿을 필요도 없이 알고 있는 사실과 추측을 분리하십시오.
-            </p>
-          </div>
-
-          <!-- Part 4: Focus Card Resonance -->
-          <div class="reading-layer-box">
-            <span class="layer-title">Ⅳ. 머문 그림이 건네는 이유</span>
-            <p class="layer-narrative" id="layerFocusCardReason">
-              선택하신 그림에서 확인되는 명확한 경계선이 현재 마음속 구분이 필요한 지점을 지목합니다.
-            </p>
-          </div>
-
-          <!-- Part 5: Actionable 24h Advice -->
-          <div class="ritual-section">
-            <span class="ritual-label">Ⅴ. 오늘의 행동</span>
-            <p class="ritual-content" id="layerActionAdvice">
-              결정하려는 문제를 세 줄(내가 확인한 사실 / 들은 말 / 불안해서 상상한 결과)로 나눠 적으세요. 세 번째 줄을 사실처럼 취급하지 않는 것이 오늘 할 일입니다.
+          <!-- 5. Actionable Advice (Single Bold Action) -->
+          <div class="action-advice-card">
+            <span class="action-label">오늘의 행동</span>
+            <p class="action-content" id="layerActionAdvice">
+              이상형의 조건을 더 정리하지 마세요. 대신 이번 주 안에 사람을 만날 수 있는 약속 하나를 구체적으로 확정하세요.
             </p>
           </div>
 

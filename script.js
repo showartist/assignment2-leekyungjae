@@ -514,29 +514,37 @@ function validateRitualPipeline() {
   });
 });
 
-// Step 1: Birth Date Handler (Guaranteed 100% Smooth Step Transition)
-btnStep1Next?.addEventListener('click', () => {
-  let y = birthYear?.value.trim() || '';
-  let m = birthMonth?.value.trim() || '';
-  let d = birthDay?.value.trim() || '';
+function isValidBirthDateParts(y, m, d) {
+  if (!/^\d{4}$/.test(y) || !/^\d{1,2}$/.test(m) || !/^\d{1,2}$/.test(d)) {
+    return false;
+  }
 
-  // 생년월일 전체가 비어있는 경우 기본 연도(1995)로 자동 설정
-  if (!y && !m && !d) {
-    y = '1995'; m = '01'; d = '01';
-    if (birthYear) birthYear.value = y;
-    if (birthMonth) birthMonth.value = m;
-    if (birthDay) birthDay.value = d;
-    showToast("🔮 나의 기본 시간 좌표(1995/01/01)가 연결되었습니다.");
-  } else {
-    // 2자리 연도 입력 시 4자리로 자동 보정 (예: 95 -> 1995, 05 -> 2005)
-    if (/^\d{2}$/.test(y)) {
-      const yNum = parseInt(y, 10);
-      y = yNum > 26 ? `19${y}` : `20${y}`;
-      if (birthYear) birthYear.value = y;
-    }
-    // 월/일이 누락된 경우 01월 01일로 자동 채움
-    if (!m) { m = '01'; if (birthMonth) birthMonth.value = '01'; }
-    if (!d) { d = '01'; if (birthDay) birthDay.value = '01'; }
+  const year = Number(y);
+  const month = Number(m);
+  const day = Number(d);
+  const today = new Date();
+
+  if (year < 1900 || year > today.getFullYear()) return false;
+  if (month < 1 || month > 12) return false;
+  if (day < 1 || day > 31) return false;
+
+  const candidate = new Date(year, month - 1, day);
+  return candidate.getFullYear() === year &&
+    candidate.getMonth() === month - 1 &&
+    candidate.getDate() === day;
+}
+
+// Step 1: Birth Date Handler (Strict Validation — no auto-fill bypass)
+btnStep1Next?.addEventListener('click', () => {
+  const y = birthYear?.value.trim() || '';
+  const m = birthMonth?.value.trim() || '';
+  const d = birthDay?.value.trim() || '';
+
+  if (!isValidBirthDateParts(y, m, d)) {
+    isBirthValidated = false;
+    showToast("🔮 생년월일을 정확히 입력해주세요. 예: 1995 / 08 / 20");
+    birthYear?.focus();
+    return;
   }
 
   isBirthValidated = true;
@@ -545,18 +553,23 @@ btnStep1Next?.addEventListener('click', () => {
   userQuestion?.focus();
 });
 
-// Step 2: Question Handler (Guaranteed Smooth Step Transition)
+// Step 2: Question Handler (Strict Validation — no default question bypass)
 btnStep2Next?.addEventListener('click', () => {
   if (!isBirthValidated) {
-    isBirthValidated = true;
+    showToast("🔮 먼저 생년월일을 검증해주세요.");
+    ritualStep1?.classList.remove('hidden');
+    ritualStep2?.classList.add('hidden');
+    ritualStep3?.classList.add('hidden');
+    birthYear?.focus();
+    return;
   }
 
-  let q = userQuestion?.value.trim() || '';
-  // 질문이 공백인 경우 기본 추천 질문으로 자동 완성 후 통과
+  const q = userQuestion?.value.trim() || '';
   if (!q || q.length < 2) {
-    q = "지금 내가 놓치고 있는 것은 무엇일까?";
-    if (userQuestion) userQuestion.value = q;
-    showToast("🔮 마음의 기본 질문이 카드에 연결되었습니다.");
+    isQuestionValidated = false;
+    showToast("🔮 카드에 맡길 질문을 두 글자 이상 적어주세요.");
+    userQuestion?.focus();
+    return;
   }
 
   isQuestionValidated = true;
@@ -711,7 +724,7 @@ async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
   try {
     const primaryCard = drawnCards[focusIndex] || drawnCards[0];
     const questionText = userQuestion?.value.trim() || '';
-    const birthDateText = `${birthYear?.value.trim() || '1995'}.${birthMonth?.value.trim() || '08'}.${birthDay?.value.trim() || '20'}`;
+    const birthDateText = `${birthYear?.value.trim()}.${birthMonth?.value.trim()}.${birthDay?.value.trim()}`;
 
     const response = await fetch('/api/generate-fortune', {
       method: 'POST',
@@ -736,42 +749,56 @@ async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
       if (connectionInsightHeadline) {
         connectionInsightHeadline.innerHTML = headlineText.replace(/(, |\.)/g, '$1<br>');
       }
-      
-      // Layer 1: Visual Observation List (Past, Present, Future)
-      if (layerVisualObservation) {
-        if (Array.isArray(data.observations)) {
-          layerVisualObservation.innerHTML = data.observations.map(obs => `
-            <div class="obs-item">
-              <span class="obs-pos">[${obs.position}]</span>
-              <span class="obs-fact">${obs.visibleFact}</span>
-              <span class="obs-meaning">${obs.meaning}</span>
-            </div>
-          `).join('');
-        } else if (typeof data.visualObservation === 'object') {
-          layerVisualObservation.innerHTML = `
-            <div class="obs-item"><span class="obs-pos">[과거]</span><span class="obs-fact">${data.visualObservation.past || ''}</span></div>
-            <div class="obs-item"><span class="obs-pos">[현재]</span><span class="obs-fact">${data.visualObservation.present || ''}</span></div>
-            <div class="obs-item"><span class="obs-pos">[미래]</span><span class="obs-fact">${data.visualObservation.future || ''}</span></div>
-          `;
-        }
-      }
-      
-      // Layer 2: Visual Transition (All 3 Cards Movement Narrative)
+
+      // Populate Card-level Captions directly under the 3 spread cards
+      const obs = data.observations || {};
+      const pastObs = obs.past || (Array.isArray(obs) ? obs[0] : {});
+      const presObs = obs.present || (Array.isArray(obs) ? obs[1] : {});
+      const futObs = obs.future || (Array.isArray(obs) ? obs[2] : {});
+
+      const pastFactEl = document.getElementById('pastFactText');
+      const pastMeanEl = document.getElementById('pastMeaningText');
+      if (pastFactEl) pastFactEl.textContent = pastObs.fact || pastObs.visibleFact || drawnCards[0]?.artwork.visibleElements[0] || '';
+      if (pastMeanEl) pastMeanEl.textContent = pastObs.meaning || '자기 기준과 생활의 틀이 단단해진 시간.';
+
+      const presFactEl = document.getElementById('presentFactText');
+      const presMeanEl = document.getElementById('presentMeaningText');
+      if (presFactEl) presFactEl.textContent = presObs.fact || presObs.visibleFact || drawnCards[1]?.artwork.visibleElements[0] || '';
+      if (presMeanEl) presMeanEl.textContent = presObs.meaning || '마음은 열렸지만 생활의 반경은 아직 닫혀 있음.';
+
+      const futFactEl = document.getElementById('futureFactText');
+      const futMeanEl = document.getElementById('futureMeaningText');
+      if (futFactEl) futFactEl.textContent = futObs.fact || futObs.visibleFact || drawnCards[2]?.artwork.visibleElements[0] || '';
+      if (futMeanEl) futMeanEl.textContent = futObs.meaning || '내부의 준비가 실제 만남으로 이동할 가능성.';
+
+      // Layer 2: Visual Transition Movement
       if (layerVisualFlow) {
         layerVisualFlow.textContent = data.visualTransition || data.visualFlow || `${drawnCards[0].nameKo}의 구도에서 시작해 ${drawnCards[1].nameKo}의 중심을 거쳐 ${drawnCards[2].nameKo}의 수직 확장 구도로 변화합니다.`;
       }
 
-      // Layer 3: Direct Question Response
+      // Focus Card Spotlight Showcase (Chosen Card Highlight & 35%+ Deep Reading)
+      const focusShowcaseImg = document.getElementById('focusShowcaseImg');
+      const focusShowcaseTitle = document.getElementById('focusShowcaseTitle');
+      if (focusShowcaseImg) {
+        const cardImgName = primaryCard.id + '.png';
+        focusShowcaseImg.src = `assets/cards/${cardImgName}`;
+      }
+      if (focusShowcaseTitle) {
+        const posName = focusIndex === 0 ? 'I. PAST — 과거' : focusIndex === 1 ? 'II. PRESENT — 현재' : 'III. FUTURE — 미래';
+        focusShowcaseTitle.textContent = `${posName} · ${primaryCard.nameKo}`;
+      }
+
+      // Focus Card Deep Reading (Primary Reading - 35%+ of Volume)
+      if (layerFocusCardReason) {
+        layerFocusCardReason.textContent = data.focusCardReading || data.focusCardReason || "선택하신 그림의 특정 시각적 구도와 인물의 몸짓이 질문자의 현재 상태와 닮아 있습니다.";
+      }
+
+      // Layer 4: Direct Question Response
       if (layerQuestionResponse) {
         layerQuestionResponse.textContent = data.questionResponse || primaryCard.meaning;
       }
 
-      // Layer 4: Focus Card Reason
-      if (layerFocusCardReason) {
-        layerFocusCardReason.textContent = data.focusCardReason || "선택하신 그림의 특정 시각적 요소가 현재 집중이 필요한 지점을 가리킵니다.";
-      }
-
-      // Layer 5: Action Advice (24h Actionable)
+      // Layer 5: Action Advice (24h Actionable Single Step)
       if (layerActionAdvice) {
         layerActionAdvice.textContent = data.actionAdvice || primaryCard.actionAdvice;
       }
@@ -812,22 +839,41 @@ async function completeFortuneReading(drawnCards, mode, focusIndex = 1) {
     if (connectionInsightHeadline) {
       connectionInsightHeadline.innerHTML = primaryCard.talismanMessages[0].replace(/(, |\.)/g, '$1<br>');
     }
-    
-    if (layerVisualObservation) {
-      layerVisualObservation.innerHTML = `
-        <div class="obs-item"><span class="obs-pos">[과거]</span><span class="obs-fact">${drawnCards[0]?.artwork.visibleElements[0] || ''}</span><span class="obs-meaning">기존 관성에 머물러 있던 상태입니다.</span></div>
-        <div class="obs-item"><span class="obs-pos">[현재]</span><span class="obs-fact">${drawnCards[1]?.artwork.visibleElements[0] || ''}</span><span class="obs-meaning">부분적인 빛만 보고 판단하려는 상태입니다.</span></div>
-        <div class="obs-item"><span class="obs-pos">[미래]</span><span class="obs-fact">${drawnCards[2]?.artwork.visibleElements[0] || ''}</span><span class="obs-meaning">확인된 데이터로 수직 축을 세우는 시점입니다.</span></div>
-      `;
-    }
+
+    const pastFactEl = document.getElementById('pastFactText');
+    const pastMeanEl = document.getElementById('pastMeaningText');
+    if (pastFactEl) pastFactEl.textContent = drawnCards[0]?.artwork.visibleElements[0] || '황금 문양으로 몸을 감싼 정적인 자세.';
+    if (pastMeanEl) pastMeanEl.textContent = '자기 기준과 생활의 틀이 단단해진 시간.';
+
+    const presFactEl = document.getElementById('presentFactText');
+    const presMeanEl = document.getElementById('presentMeaningText');
+    if (presFactEl) presFactEl.textContent = drawnCards[1]?.artwork.visibleElements[0] || '몸은 드러났지만 타원형 경계 안에 머묾.';
+    if (presMeanEl) presMeanEl.textContent = '마음은 열렸지만 생활의 반경은 아직 닫혀 있음.';
+
+    const futFactEl = document.getElementById('futureFactText');
+    const futMeanEl = document.getElementById('futureMeaningText');
+    if (futFactEl) futFactEl.textContent = drawnCards[2]?.artwork.visibleElements[0] || '거대한 태양과 외부를 향한 장면.';
+    if (futMeanEl) futMeanEl.textContent = '내부의 준비가 실제 만남으로 이동할 가능성.';
+
     if (layerVisualFlow) {
-      layerVisualFlow.textContent = `${drawnCards[0]?.nameKo || ''}의 정적 구도에서 출발해 ${drawnCards[1]?.nameKo || ''}의 관찰을 거쳐 ${drawnCards[2]?.nameKo || ''}의 명확한 수직선으로 이동합니다.`;
+      layerVisualFlow.textContent = `${drawnCards[0]?.nameKo || ''}의 황금 문양에서 출발해 ${drawnCards[1]?.nameKo || ''}의 타원 경계를 거쳐 ${drawnCards[2]?.nameKo || ''}의 거대한 태양으로 이동합니다.`;
+    }
+
+    const focusShowcaseImg = document.getElementById('focusShowcaseImg');
+    const focusShowcaseTitle = document.getElementById('focusShowcaseTitle');
+    if (focusShowcaseImg) {
+      focusShowcaseImg.src = `assets/cards/${primaryCard.id}.png`;
+    }
+    if (focusShowcaseTitle) {
+      const posName = focusIndex === 0 ? 'I. PAST — 과거' : focusIndex === 1 ? 'II. PRESENT — 현재' : 'III. FUTURE — 미래';
+      focusShowcaseTitle.textContent = `${posName} · ${primaryCard.nameKo}`;
+    }
+
+    if (layerFocusCardReason) {
+      layerFocusCardReason.textContent = "선택하신 인물은 숨지 않지만 여전히 하나의 테두리 안에 머물러 있습니다. 마음은 열려 있으나 일상의 반경이 여전히 닫혀 있는 상태를 지목합니다.";
     }
     if (layerQuestionResponse) {
-      layerQuestionResponse.textContent = `질문("${userQuestion?.value.trim() || '오늘의 질문'}")에 대해 지금 판단을 흐리는 것은 자원 부족이 아니라 확인되지 않은 두려움입니다.`;
-    }
-    if (layerFocusCardReason) {
-      layerFocusCardReason.textContent = "선택하신 그림에서 확인되는 명확한 구도가 현재 구분이 필요한 지점을 지목합니다.";
+      layerQuestionResponse.textContent = `질문("${userQuestion?.value.trim() || '오늘의 질문'}")에 대해 지금 판단을 가로막는 것은 정보 부족이나 준비 부족이 아닙니다. 이미 준비는 갖춰졌으나 생활 방식이 외부를 받아들일 공간을 만들지 않고 있습니다.`;
     }
     if (layerActionAdvice) {
       layerActionAdvice.textContent = primaryCard.actionAdvice;

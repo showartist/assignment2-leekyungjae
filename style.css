@@ -417,69 +417,166 @@ body {
 
 /* 4-Layer Reading Result Box */
 .reading-layer-box {
+/* Card Caption Block (Directly under 3 Spread Cards) */
+.card-caption-block {
   width: 100%;
-  max-width: 650px;
+  max-width: 180px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  background: rgba(28, 23, 17, 0.4);
+  gap: 4px;
+  text-align: center;
+  padding: 8px 6px;
+  background: rgba(22, 18, 14, 0.5);
+  border-top: 1px solid rgba(182, 146, 74, 0.3);
+}
+
+.caption-fact {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #f1ebd9;
+  line-height: 1.5;
+}
+
+.caption-meaning {
+  font-size: 0.8rem;
+  color: #b5a995;
+  line-height: 1.4;
+}
+
+/* Sublabel Header for Editorial Sections */
+.section-sublabel {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--gold-soft);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Visual Transition Banner */
+.visual-transition-banner {
+  width: 100%;
+  max-width: 680px;
+  padding: 18px 24px;
+  background: rgba(28, 23, 17, 0.3);
   border-left: 2px solid var(--gold-soft);
-  padding: 16px 20px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   text-align: left;
 }
 
-.layer-title {
+.transition-text {
+  font-size: 1.02rem;
+  line-height: 1.85;
+  color: #e8dfd1;
+}
+
+/* Focus Card Spotlight Showcase (Primary Reading Section) */
+.focus-card-showcase {
+  width: 100%;
+  max-width: 680px;
+  margin: 28px 0 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 24px;
+  background: radial-gradient(circle at center, rgba(182, 146, 74, 0.08) 0%, rgba(12, 10, 8, 0.6) 80%);
+  border: 1px solid rgba(182, 146, 74, 0.25);
+  border-radius: 4px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+
+.showcase-card-frame {
+  width: 200px;
+  height: 310px;
+  margin: 16px 0 20px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  box-shadow: 0 16px 40px rgba(182, 146, 74, 0.22);
+}
+
+.showcase-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.focus-card-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--gold-soft);
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.focus-card-reading-text {
+  font-size: 1.05rem; /* Min 16px desktop */
+  line-height: 1.88;
+  color: #f4efe6;
+  text-align: left;
+  word-break: keep-all;
+}
+
+/* Direct Question Response Block */
+.question-response-block {
+  width: 100%;
+  max-width: 680px;
+  margin-bottom: 28px;
+  text-align: left;
+  padding: 0 6px;
+}
+
+.question-response-text {
+  font-size: 1.02rem; /* Min 16px desktop */
+  line-height: 1.85;
+  color: #ece4d6;
+  word-break: keep-all;
+}
+
+/* Action Advice Single Card */
+.action-advice-card {
+  width: 100%;
+  max-width: 680px;
+  padding: 22px 28px;
+  background: linear-gradient(135deg, rgba(182, 146, 74, 0.15) 0%, rgba(20, 16, 12, 0.7) 100%);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.action-label {
   font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.15em;
-  color: var(--gold-soft);
-}
-
-.layer-narrative {
-  font-size: 0.96rem;
-  line-height: 1.75;
-  color: #ddd4c4;
-}
-
-/* Observations List Styling */
-.observation-list {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 4px;
-}
-
-.obs-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 8px 12px;
-  background: rgba(182, 146, 74, 0.06);
-  border-left: 1px solid var(--gold);
-}
-
-.obs-pos {
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  font-weight: 700;
   color: var(--gold);
-  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
 }
 
-.obs-fact {
-  font-size: 0.92rem;
-  color: #f1ebd9;
+.action-content {
+  font-size: 1.05rem;
   font-weight: 500;
+  line-height: 1.8;
+  color: #fff;
+  word-break: keep-all;
 }
 
-.obs-meaning {
-  font-size: 0.88rem;
-  color: #b5a995;
-  line-height: 1.5;
+@media (max-width: 768px) {
+  .focus-card-reading-text,
+  .question-response-text,
+  .action-content,
+  .transition-text {
+    font-size: 0.95rem; /* Min 15px mobile */
+    line-height: 1.8;
+  }
 }
 
 .logo-subtext {
