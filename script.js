@@ -485,29 +485,79 @@ function validateRitualPipeline() {
   return true;
 }
 
-// Step 1: Birth Date Validation (Strict Year/Month/Day Regex)
+// Auto-jump & Smart Splitter for Birthdate Inputs
+[birthYear, birthMonth, birthDay].forEach(input => {
+  input?.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/\D/g, ''); // 숫지만 남김
+    
+    // 사용자가 첫 번째 박스(birthYear)에 6자리나 8자리를 한 번에 넣은 경우 (예: 19950820 또는 950820)
+    if (e.target === birthYear && (val.length === 6 || val.length === 8)) {
+      if (val.length === 8) {
+        birthYear.value = val.substring(0, 4);
+        birthMonth.value = val.substring(4, 6);
+        birthDay.value = val.substring(6, 8);
+      } else if (val.length === 6) {
+        const y2 = parseInt(val.substring(0, 2), 10);
+        birthYear.value = y2 > 26 ? '19' + val.substring(0, 2) : '20' + val.substring(0, 2);
+        birthMonth.value = val.substring(2, 4);
+        birthDay.value = val.substring(4, 6);
+      }
+      birthDay?.focus();
+      return;
+    }
+
+    // 자동 포커스 이동 (4자리 연도 -> 월, 2자리 월 -> 일)
+    if (e.target === birthYear && val.length >= 4) {
+      birthMonth?.focus();
+    } else if (e.target === birthMonth && val.length >= 2) {
+      birthDay?.focus();
+    }
+  });
+});
+
+// Step 1: Birth Date Validation (Smart Year/Month/Day & Flexible 2-digit Year)
 btnStep1Next?.addEventListener('click', () => {
-  const y = birthYear?.value.trim() || '';
-  const m = birthMonth?.value.trim() || '';
-  const d = birthDay?.value.trim() || '';
+  let y = birthYear?.value.trim() || '';
+  let m = birthMonth?.value.trim() || '';
+  let d = birthDay?.value.trim() || '';
+
+  // 2자리 연도 입력 시 4자리로 자동 보정 (예: 95 -> 1995, 05 -> 2005)
+  if (/^\d{2}$/.test(y)) {
+    const yNum = parseInt(y, 10);
+    y = yNum > 26 ? `19${y}` : `20${y}`;
+    if (birthYear) birthYear.value = y;
+  }
 
   const yearNum = parseInt(y, 10);
   const monthNum = parseInt(m, 10);
   const dayNum = parseInt(d, 10);
 
-  const isYearValid = /^(19|20)\d{2}$/.test(y) && yearNum >= 1900 && yearNum <= 2026;
+  const isYearValid = /^\d{4}$/.test(y) && yearNum >= 1900 && yearNum <= 2026;
   const isMonthValid = /^(0?[1-9]|1[0-2])$/.test(m) && monthNum >= 1 && monthNum <= 12;
   const isDayValid = /^(0?[1-9]|[12]\d|3[01])$/.test(d) && dayNum >= 1 && dayNum <= 31;
 
   if (!isYearValid || !isMonthValid || !isDayValid) {
-    [birthYear, birthMonth, birthDay].forEach(el => el?.classList.add('input-error'));
+    [birthYear, birthMonth, birthDay].forEach(el => {
+      if (el) el.classList.add('input-error');
+    });
     setTimeout(() => {
       [birthYear, birthMonth, birthDay].forEach(el => el?.classList.remove('input-error'));
     }, 500);
 
-    showToast("🔮 올바른 생년월일(예: 1995 / 08 / 20)을 적어주셔야 다음 단계로 넘어갑니다.");
+    if (!y) {
+      showToast("🔮 출생 연도(예: 1995)를 입력해주세요.");
+      birthYear?.focus();
+    } else if (!m) {
+      showToast("🔮 태어난 월(예: 08)을 입력해주세요.");
+      birthMonth?.focus();
+    } else if (!d) {
+      showToast("🔮 태어난 일(예: 20)을 입력해주세요.");
+      birthDay?.focus();
+    } else {
+      showToast("🔮 올바른 생년월일(예: 1995 / 08 / 20)을 적어주세요.");
+      birthYear?.focus();
+    }
     isBirthValidated = false;
-    birthYear?.focus();
     return;
   }
 
